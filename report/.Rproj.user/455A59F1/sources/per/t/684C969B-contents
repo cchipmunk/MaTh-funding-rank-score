@@ -1,0 +1,1233 @@
+---
+project:
+  type: default
+  output-dir: output
+bibliography: status_august.bib
+fig-format: png
+tbl-format: png
+engine: knitr
+
+format:
+  html:
+    toc: true 
+    code-fold: true 
+    code-tools: true
+    code-overflow: wrap
+    embed_resources: true
+    citations: true
+    toc-depth: 2
+    toc-title: "Contents"
+    theme: cosmo
+    df-print: kable
+    whitespace: small
+    
+  docx:
+    toc: false
+    papersize: a4
+    bibliographystyle: natbib
+    
+  pdf:
+    format: context
+    toc: false
+    toc-title: "Contents"
+    number-sections: true
+    indent: true
+    link-citations: true
+    linkcolor: black
+    toc-depth: 2
+    number-depth: 2
+    papersize: a4 
+    df-print: kable
+    bibliographystyle: natbib
+    natbiboptions: authoryear, round
+    header-includes: 
+      - \usepackage{caption}
+      - \tracinglostchars=2
+      - \usepackage{unicode-math}
+      - \setmathfont{NewCMMath-Book}
+      - \usepackage{amssymb}
+      - \usepackage{amsmath}
+      - \usepackage{unicode-math}
+      - \newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+      - \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+      - \usepackage[skip=10pt plus1pt, indent = 30pt]{parskip}
+
+    fig-pos: "H"
+    #mainfont: "Times New Roman"
+    #sansfont: "Times New Roman"
+      
+freeze: auto
+---
+
+
+\begin{center}
+\fontspec{TeX Gyre Heros}
+\thispagestyle{empty}
+
+
+\LARGE\textbf{Towards Bayesian joint modelling of ranks and scores to
+reduce} \\
+\vspace{0.2cm}
+\LARGE\textbf{uncertainty in the assessment of grant proposals
+quality} 
+
+
+\vspace{1cm}
+\hrule
+\vspace{5cm}
+
+
+\Large\text{Master Thesis in Biostatistics (STA495)}
+
+
+\vspace{1.2cm}
+
+\Large{by}
+
+\vspace{1.2cm}
+\Large{Alvin Walker} \\[0.2cm]
+\normalsize{20-912-812}
+
+\vspace{4cm}
+\normalsize{supervised by}
+
+\vspace{1cm}
+\text{Dr. Heyard, Rachel} \\[0.2cm]
+\text{PD Dr. Roos, Malgorzata} \\[0.2cm]
+
+\vfill
+\text{Zurich, \today}
+
+\end{center}
+
+\newpage
+\normalfont
+
+
+# Abstract {.unnumbered}
+\pagenumbering{roman}
+
+Enter abstract text here.
+\newpage
+
+\renewcommand{\contentsname}{Contents} 
+\tableofcontents
+\newpage
+
+<!-- General structure -->
+<!-- evtl.
+
+# Acknowledgements {.unnumbered}
+
+Text -->
+
+
+<!--
+
+REDO figure scores data (switch left and right) + right side 255 present twice
+REDO figure score vs Rank (switch left and right).
+
+
+
+ -->
+
+
+
+<!-- ################################################################ -->
+
+# Introduction
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+## Grant Proposal Funding
+
+When resources are limited, decisions have to be made on how to allocate them. In research, funding agencies make these decisions by accepting or rejecting grant proposals. Agencies contact panels of experts which individually review, rank or score proposals, the best of which are funded and the rest rejected [ @harman_management_1998 ]. There is evidence for bias in this process. For instance, funding for innovative, risky or interdisciplinary research is less likely to be awarded than for conservative and conventional proposals [@guthrie_measuring_2019]. Moreover, evaluations from individual experts are known to be unreliable, even after panel meetings, making it hard to objectively assess which proposals are worth funding [@fogelholm_panel_2012]. Despite these shortcomings, there is no existing alternative to this expert evaluation system (expert peer review). To mitigate its downsides, statistical methods can be used to analyse the experts' evalutations in order to provide fair decision making.
+
+Depending on the assessment system, the experts either make qualitative or quantitative statements about the quality of the proposals. This project will focus on statistical methods to analyse two quantitative expert evaluation systems:
+
+\begin{enumerate}
+\item Scoring: Where experts give grades to proposal on either a continuous or ordinal scale.
+\item Ranking: Where experts rank all, or a subset of the proposals from best to worst. 
+\end{enumerate}
+
+<!-- The main difference between the two systems is that ranking directly compares the proposals against each other, and scoring assesses each proposal individually. Reformulated, this means that when ranked, the proposals are evaluated on a relative scale and when scored, they are evaluated on an absolute scale. 
+-->
+
+
+To analyse these data, multiple statistical models, both frequentist and Bayesian, already exist. In this thesis, I will first review and reproduce existing statistical methods for evaluating scoring data and ranking data. Then, I will unify the scale of these models' results in order to provide a comparison of their performance. Finally, I will provide steps that can be taken towards creating a Bayesian joint Hierarchical model combining Scores and ranks. We hypothesize that this model would enable a more precise analysis of object quality in comparison to the other models made for this purpose. This would improve the current decision making process and ultimately allow resources to be allocated more fairly.
+
+<!-- To analyse these data, multiple statistical models, both frequentist and Bayesian, already exist. In this thesis, I will first investigate, reproduce and compare existing statistical methods for evaluating scoring data and ranking data. Then, the focus will shift to developing a Bayesian joint model for combining scores and ranks. We hypothesize such a joint model would enable a more precise analysis in comparison to models analysing scoring and ranking data seperately, providing less uncertainty in the evaluation of grant proposal quality. This would improve the current decision making process and ultimately allow resources to be allocated more fairly.  -->
+
+<!-- evaluation of grant proposal quality. -->
+
+
+## Definitions
+
+Many different notations and formulations are used in literature to refer to ranking and scoring data. For clarity, this section defines the notation that we will use in this thesis. It is inspired from Heyard et al. [-@heyard_rethinking_2022] and Xia [-@xia_learning_2019].
+
+### Objects and Assessors
+
+We define objects as the set of items that are ranked and scored by the assessors. Conversely, we define assessors as the people giving scores and rankings to the objects. In this thesis, the objects will be the grant proposals and the assessors the experts on the evaluation panel.
+
+::: {.callout-note title="**Definitions: Alternatives and Assessors**" }
+
+**Objects**  are a set of $n \ \epsilon \ \mathbb{N}$ items to be ranked or scored by assessors. In this thesis we will denote the set of objects as $\mathcal{O} = \{o_1, ..., o_n\}$, with a subscript $i \ \epsilon \{1,...,n\}$.
+
+**Assessors** are a set of $m \in \mathbb{N}$ experts who give scores and ranks to the objects $\mathcal{O}$.  We will denote the individual assessors with a subscript $j \ \epsilon \{1,...,m\}$.
+
+:::
+
+### Scores 
+
+Scores are obtained by having assessors give a grade to each object by estimating its quality. Grades are measured on arbitrary scales that are either ordinal or continuous. When scoring, assessors examine each object individually and compare them to their representation of an ideal object; their assessment of each object is assumed to be independent from all other objects (see Figure \ref{fig-rankscore}). In this thesis, we will use the convention that low scores represent high quality and high scores represent low quality. \      
+
+::: {.callout-note title="**Definition: Scores**" }
+
+**Scores** $S_j$ are a set of grades given to all of $\mathcal{O}$ by an assessor $j$. The score given to a specific object $o_i \ \epsilon \ \mathcal{O}$ by a specific assessor $j$ will be written $y_{i,j}$ with $i \ \epsilon \  \{1,...,n\}$ and $j \ \epsilon \ \{1, ..., m\}$.
+
+**Scoring data** $S = \{S_1, ..., S_m\}$ are the observed sores given by all assessors.
+
+:::
+
+
+### Rankings
+
+In contrast to scores, rankings are obtained by having each assessor directly compare each object against each other and order them from best to worst. The objects are therefore assessed on a relative scale; the assessment of each object is directly influenced by the quality of all other objects in the alternatives (see Figure \ref{fig-rankscore}). In this thesis, we will use the convention that the best rank is the 1st, and then, as the rank ascends, the quality of the objects decrease. 
+
+::: {.callout-note title="**Definitions: Rankings**" }
+
+**Linear orders** $\mathbf{\mathcal{L}(\mathcal{O})}$ are the set of all possible ranking orders of $\mathcal{O}$. For any pair of alternatives $o_i$, $o_l$ $\in \mathcal{O}$, we will denote $o_i$ $\succ$ $o_l$ if $o_i$ is preferred to $o_l$.
+
+
+**Ranking order** $R_j \ \epsilon \ \mathcal{L}(\mathcal{O})$ is the ranking order given by a specific assessors $j \ \epsilon \ \{1,...,m\}$ to $\mathcal{O}$. The rank position given to an object $o_i \in \mathcal{O}$ by an assessor $j$ will be denoted $r_{i,j}$.
+
+**Ranking data** $R = \{R_1, ..., R_m\}$ are the observed ranking orders given by all assessors.
+
+<!-- **Partial linear orders**  $\mathbf{\mathcal{L'}(\mathcal{O})}$ -->
+
+<!-- **Partial Rankings** ${R_j}'$ -->
+
+:::
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/score_rank.png}
+    \caption{Visualisation of ranking and scoring methodologies. \textbf{On the left,} each assessor individually compares all objects to their representation of an ideal object (which remains unobservable) to give scores. \textbf{On the right,} each assessor individually compares all objects to each other in order to obtain a ranking.}
+    \label{fig-rankscore}
+\end{figure}
+
+
+### Object Quality and Final Ordering 
+
+The ultimate objective of our modelling will be to select the most appropriate subset of objects for funding, given a constraint, usually the available funding amount. To obtain this subset, we will need to make a final ordering of the grant objects. This will either be achieved, by taking a model's predicted true underlying ranking, or by estimating and sorting a latent quality variable for each object. Once the final ordering is achieved, a funding line can be introduced. The funding line represents the highest value of the latent quality (the minimal quality standard) necessary for a object to be funded, or, in the case where only a final ordering is available, the limit rank a object needs to achieve in order to be funded.
+
+
+::: {.callout-note title="**Definitions: Quality and final ordering**" }
+**Object latent quality** $\theta^{k}_i$ is the latent quality of an object $o_i$ according to a model $k$. In this thesis, we will use the convention that lower values of the latent quality variables represent higher object qualities.
+
+**Final ordering** $\mathcal{F}_k(\mathcal{O}) \ \in \mathcal{L}(\mathcal{O})$ is the final ordering of the object $o_i \in \mathcal{O}$ according to model $k$.
+
+**Funding line** In the cases where $\theta^{k}_i$ is available, the highest value of the latent quality $\theta^{k}_i$ possible for an object to be funded. In the cases where only  $\mathcal{F}_k(\mathcal{O})$ is available, the limit rank a object needs to reach in order for it to be funded. 
+:::
+
+
+## Modelling Approaches to Scoring Data and Ranking Data
+
+Models for scoring data are very common in the literature. In general, it is assumed that the scores given to objects follow a given distribution, from which the parameters can be inferred. By interpreting these parameters, statements are then made about the scoring data (for example, regarding the spread of the scores or the expected values of the scores given to specific objects). As ranking data are in a special format, they require extra consideration when being analysed. Consequently, many different formulations and approaches exist to model them. In this section, we will discuss notions of how ranking data can be thought of, described and modelled.
+
+### Pairwise Comparisons and Ranking
+
+Ranking data can be thought of as a series of pairwise comparisons. This approach considers that the assessors simply compare many pairs of objects and generate a ranking from these comparisons [@marden_analyzing_2014]. The ranking data is then modelled through a series of parameters representing the probability of winning these pairwise comparisons. This description of ranking data is used in numerous models such as the Bradley-Terry model [@bradley_rank_1952] and the Plackett-Luce model [@plackett_analysis_1975]. This description of ranks comes at a cost as the number of parameters increases very fast for larger ranking models. 
+
+
+### Distance-Based Ranking
+
+In distance-based ranking, we assume that the data have a true underlying ranking, and that the assessors are imperfect judges which attempt to perceive and reproduce this ranking [@fligner_distance_1986]. The true ranking is perceived as a ranking order $L \ \epsilon \ \mathcal{L}(\mathcal{O})$, and the further the observed ranking from this true ranking, the less likely the ranking is to be in the data. There are many possible parametrisations of this distance. Using a distance-based model instead of a pairwise comparison model drastically reduces the amount of parameters to estimate when modelling. Unfortunately, the simple interpretation of the parameters from the pairwise comparisons is lost in distance-based models.
+
+
+
+### Thurstonian Ranking {#sec-tuhrst}
+
+Thurstonian ranking is another way to model ranking. As in distance-based ranking, we assume that the assessors are imperfect judges. However, in opposition to distance based ranking, the ranking data is not assumed to be generated based on a true underlying linear order. Instead, we assume the ranking data to be generated by a series of latent random variables representing each object's quality [@thurstone_law_1927]. According to Thurstonian ranking, each assessor observes a realisation of all the random variables and ranks them from highest to lowest based on their value (see Figure \ref{fig-thurst}).
+ 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/thurst_rank.png}
+    \caption{Example of Thurstonian ranking with three objects. The lower the score, the higher the quality. Each assessor observes realisations of the three objects' latent quality distributions. The order of the realisations determines the order in which the assessors rank the objects. In this case, the most common ranking observed will be $o_1 \succ o_2 \succ o_3$, the rankings $o_2 \succ o_1 \succ o_3$ and $o_1 \succ o_3 \succ o_2$ will also commonly be observed, and the other linear orders will very rarely be observed.}
+    \label{fig-thurst}
+\end{figure}
+
+
+
+
+
+<!-- ################################################################ -->
+
+
+
+# Data {#sec-data}
+
+In order to compare and reproduce models, we will fit them on a dataset made available in Gallo et al. [-@gallo_new_2023]. The data were collected in the context of a real-world call for proposals by the American Institute of Biological Science (AIBS) in 2020. This dataset contains both scoring data and partial ranking data given to 28 objects (grant proposals) by 10 assessors (experts). The partial ranking is provided for the top-6 best objects according to each assessors and the objects are scored on a scale from 1 (best) to 5 (worst). The funding was awarded to the top-3 objects. A summary of the main properties of the data can be found in Table \ref{tab-datov}.
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c||c|c|}
+        \hline
+        \textbf{Score property}  & \textbf{Value} & \textbf{Rank Property} & \textbf{Value} \\
+        \hline
+        Scoring scale & 1 to 5 & Ranking scale & top-6 \\
+        \hline
+        Objects ($n$) & 28 & Objects ($n$) & 11 \\
+        Assessors ($m$) & 10  & Assessors ($m$) & 10\\
+        Scores per object & 7-10 & Ranks per object & 1-10\\
+        Missing scores & 21 & Missing ranks & 5 \\
+        Total scores (obs./tot.) & 259/280 & Total ranks (obs./total) & 49/60  \\
+        \hline
+    \end{tabular}
+    \caption{Overview of the main characteristics of the dataset from Gallo et al. (2022).}
+    \label{tab-datov}
+\end{table}
+
+The data are unfortunately not complete. In the scoring data they are 21 missing observations out of the 280 observations, five of these observations are missing due to conflict of interests (MCI) between the assessors and the object, and 16 of them are assumed to be missing completely at random (MCAR). In the ranking data, 11 observations are missing, five MCI and six MCAR. Specific considerations taken to work around the missingness in the scoring data and ranking data are discussed in their respective sections below. 
+
+
+## Scoring Data
+
+An overview of the scoring data can be found in Figure \ref{fig:expl}. In the scoring data, no significant inter-assessor reliability issues were detected. However, we found a significant digit preference for the score 3, and no score worse than (higher than) 4 was given to any of the objects being evaluated. Nevertheless, this digit preference and the lack of very high scores will not affect our analysis, as none of the top contenders for the grant allocation have scores higher than $2.5$.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/data/scores_figures.png}
+    \caption{Exploratory analysis of the scoring data: On the left, a histogram representing the frequency each score was given. On the right, the span of scores given by each assessor.}
+    \label{fig:expl}
+\end{figure}
+
+
+They are 21 missing data points in the scoring data, this represents $7.5\ \%$ of the data, with no single object having more than three missing scores. The MCAR data, despite increasing the variability in object quality estimation do not create any systematic bias [@dey_consequences_2026]. The methods we use on scoring data in this thesis have no problems handling missing values and there is therefore little interest in imputating MCAR datapoints. In opposition, the MCI data are intentionally not collected from the assessor because they are known to be biased. Accordingly, imputating these values is also undesirable. We can therefore analyse the scoring data without imputating nor modifying the scoring data.
+
+
+
+## Ranking Data
+
+An overview of the ranking data can be found in Figure \ref{fig:rank_expl}, no significant bias was found in the ranking data. 
+
+There are only 11 missing data points in the ranking data, five MCI, and six MCAR. The MCAR data are due to an assessor ignoring the ranking task, and because of this, we simply remove them from the dataset as these observations do not provide any information about the object qualities. However, due to the nature of the models we are using, the MCI data is problematic. The models assume that when an object has a missing values, it did not make it in the top-6 of an assessor. Reformulated, a missing value given by a specific assessor represents an object quality worse than the 6th ranked object according to them. In the case of MCI data, the missing value does not provide any information about the quality of the object. There is a need for data imputation. However no statistical imputation tool exists in literature to imputate linear orders or ranking data (!)
+
+Therefore, we define our own imputation model for this thesis. For simplicity, and because only very few data are missing, we will use single imputation. We will use the median ranking of an object to imputate the missing values. This new rank, by definiton, introduces a tie in the ranking of the objects. In order to account for this tie, the ranks of all objects ranked below the imputated data point for each specific asessor were increased by one. This was done prior to model fitting for all objects. (insert figure maybe?)
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/data/rank_figure.png}
+    \caption{Exploratory analysis of the ranking data: The probabilities represent the frequency that a given object was ranked in a given position.}
+    \label{fig:rank_expl}
+\end{figure}
+
+
+
+# Model Fitting
+
+\label{methods}
+
+In this section, we will go through a total of six methods that can be used to generate a final ordering from the data described in @sec-data. three of these methods are focused on analyzing ranking data, two of them on scoring data and one of them jointly models scoring and ranking data. For each method, we first provide an overview of its inner workings, and then provide the results of a fit on the data. Each model was fitted on the entirety of the dataset. However, for readability, we only provide the results for the ten best objects in each final ordering. An overview of the methods analysed and their main characteristics can be found in Table \ref{tab-overview}.
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+           \hline
+          & \textbf{Scores} & \textbf{Ranks} &  \textbf{Frequentist} & \textbf{Bayesian}\\
+        \hline
+         Mean scores & $\checkmark$ &  & $\checkmark$ & \\
+         Hierarchical model for scores & $\checkmark$ &  & & $\checkmark$ \\
+         \hline
+         Plackett-Luce &  & $\checkmark$ & $\checkmark$ & \\
+         Mallows &  & $\checkmark$ & $\checkmark$ & \\
+         Thurstonian &  & $\checkmark$  & $\checkmark$ & \\
+         \hline
+         Mallows-binomial & $\checkmark$ & $\checkmark$ & $\checkmark$ & \\
+         Joint hierarchical model & $\checkmark$ & $\checkmark$  & & $\checkmark$ \\
+         \hline
+    \end{tabular}
+    \caption{Overview of scoring data and ranking data models analysed in this thesis with their main characteristics}
+    \label{tab-overview}
+\end{table}
+
+
+
+## Models using Scoring Data
+
+### Model of Means {#sec-mean}
+
+A first and straightforward approach proposed by Zehlike et al. [-@zehlike_fairness_2022] to assess the quality of each object is to use the mean of all the scores $y_{ij}$ obtained by an object $o_i$ as an approximation of this object's quality. In this case, the latent quality of an object $\theta_i^{\ mean}$ is estimated as follows:
+
+\begin{gather*}
+\bar{y}_i = \frac{\sum_{j=1}^m y_{ij}}{m}, \quad i = 1, ..., n \\
+\bar{y} = \frac{\sum_{i=1}^n \bar{y}_i}{n} \\
+\hat{\theta}_i^{\ mean} = \bar{y}_i - \bar{y} 
+\end{gather*}
+
+Note that, by definition, high quality objects will have negative values of latent quality $\hat{\theta}_i^{\ mean}$. This model relies on many strong assumptions. First, it assumes that each assessor has the exact same scoring habits, and is well calibrated with himself and the rest of the group as (for example, that no assessor is stricter or more lenient than their peers). Second, it also assumes that each object is evaluated completely independently from all other objects. Moreover, unless the amount of assessors is extremely large, it cannot be used to provide any reasonable uncertainty estimates in its results [@kaplan_sample_2008]. We fit this model using a \texttt{R} script [@R_core].
+
+The Model of means provides an estimate of the latent quality $\hat\theta_{i}^{\ mean}$ of the objects from the scoring data. Figure \ref{fig:mm} shows the latent quality estimates for the ten best objects according to this model. The model of means would accept objects x17, x19, and x25. Object x19 and x25 are tied for second place, and the difference in latent quality between the tied second place and the fourth place object is very low. The exact latent quality values for the ten best objects accoding to this model are provided in Table \ref{tab:mm}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_mean.png}
+    \caption{Latent quality estimates of the ten best objects according to the model of means (lower is better).}
+    \label{fig:mm}
+\end{figure}
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x19 & x25 & x21 & x4 & x23 & x22 & x20 & x6 & x3\\
+        \hline
+        \textbf{$\hat{\theta}_i^{\ mean}$} & 
+        -1.05 & -1.00 & -1.00 & -0.93 & -0.80 & -0.75 & -0.72 & -0.71 & -0.63 & -0.60 \\
+        \hline
+    \end{tabular}
+    \renewcommand{\baselinestretch}{1}
+    \caption{Latent quality estimates of the 10 best objects according to the model of means sorted from best to worst.}
+    \label{tab:mm}
+\end{table}
+
+
+
+
+
+
+### Bayesian Hierarchical Model
+
+To alleviate the assessor callibration assumptions discussed in @sec-mean, Heyard et al. [-@heyard_rethinking_2022] proposed a Bayesian hierarchical model that includes parameters to model the different scoring behaviors of the assessors. This model still offers a latent object quality variable $\theta_i^{\ hier}$ based on the mean of the scores obtained by each object. It is defined as follows:
+
+\begin{gather}
+y_{ij} | \theta_i^{\ hier}, \lambda_{ij} \sim N(\bar{y} + \theta_i^{\ hier} + \lambda_{j}\ , \sigma^2) \\
+\theta_i^{\ hier} \sim N(0,  \tau^2_{\theta}) \nonumber\\
+\lambda_{j} \sim N(0, \tau_\lambda^2) \nonumber
+\end{gather}
+
+
+ With $\bar{y}$ being the mean score of all objects, and $\lambda_{j}$ the assessor-specific effect representing the differences in scoring habits and strictness. Moreover, as this model is Bayesian, we can obtain posterior distribution for $\theta_i^{\ hier}$. (TODO describe Taus consistent prior with both INLA and JAGS). This can be used to estimate credible interval of $\theta_i^{\ hier}$. This model makes use of the funding line and Heyard et al. [-@heyard_rethinking_2022] propose that all proposals that have a 50\% credible interval of $\theta_i^{\ hier}$ crossing the funding line should be considered in a lottery instead of being directly accepted or rejected. 
+
+
+This model can be fitted using the \texttt{ERforResearch} package [@heyard_2026]. This implementation uses the \texttt{rjags}  [@rjags] framework in order to generate a MCMC sample of the posterior distributions of $\theta_i^{\ hier}$. We will use both this implementation, and a reimplimentation of the package using the Integrated Nested Laplace Approximation (INLA) framework [@rue_approximate_2009] to fit the model. More information on both these methods can be found in Annex \ref{mcmc} and Annex \ref{inla}. The MCMC Convergence diagnostic are available in Annex \ref{coda-hier}. A comparison of both these methods can be found below. (TODO comparison of models, TODO explain priors used in INLA and rjags)
+
+#### Bayesian Hierarchical Model - results
+
+
+#### JAGS
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_hier_jags}
+    \caption{Latent quality of the 10 best objects according to the hierarchical model fitted with Jags (lower is better).}
+    \label{fig:jags_hier}
+\end{figure}
+
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x25 & x19 & x21 & x4 & x23 & x22 & x20 & x6 & x3\\
+        \hline
+        \textbf{$\hat{\theta}_i^{\ mean}$} & 
+        -1.04 & -0.99 & -0.98 & -0.92 & -0.79 & -0.75 & -0.73 & -0.70 & -0.63 & -0.60 \\
+        \hline
+    \end{tabular}
+    \caption{Underlying quality estimates of the 10 best objects according to the hieararchical model fitted with jags sorted from best to worst.}
+    \label{tab:mm}
+\end{table}
+
+\renewcommand{\baselinestretch}{1}
+
+
+
+#### INLA
+
+Todo describe
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_hier_inla}
+    \caption{Latent quality of the 10 best objects according to the hierarchical model fitted with INLA (lower is better).}
+    \label{fig:inla_hier}
+\end{figure}
+
+
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x25 & x19 & x21 & x4 & x23 & x22 & x20 & x6 & x3\\
+        \hline
+        \textbf{$\hat{\theta}_i^{\ mean}$} & 
+        -1.04 & -0.99 & -0.98 & -0.92 & -0.79 & -0.74 & -0.72 & -0.70 & -0.62 & -0.59 \\
+        \hline
+    \end{tabular}
+    \caption{Underlying quality estimates of the 10 best objects according to the hieararchical model fitted with INLA sorted from best to worst.}
+    \label{tab:mm}
+\end{table}
+
+\renewcommand{\baselinestretch}{1}
+
+
+
+## Models using Ranking Data
+\label{rank_mod}
+
+### Plackett-Luce
+
+The Plackett-Luce model is a model based on pairwise comparison. It assumes that each object $o_i \in \mathcal{O}$ has a fixed probability of coming in first place when compared with the other objects in the set $\mathcal{O'} = \mathcal{O} \setminus \{o_i\}$ [@plackett_analysis_1975]. This probability is estimated by assigning a weight $w_i \in \mathcal{W}$ for each object $o_i$. The higher the value of the weight, the more preferred the object. The relationship between the probability of a specific object $o_{l}$ coming in first place and the weights $\mathcal{W}$ is defined as follows:
+
+\begin{gather} 
+\mathbb{P}[r_{l} = 1| \mathcal{W}] = \frac{w_{l}}{\sum_{i = 1}^{n}w_i} \label{decision-luce}
+\end{gather}
+
+The Plackett-Luce model considers each ranking order $R_j$ as a sequence of decisions made using Equation (\ref{decision-luce}). A formulation of the likelihood of this model can be found in Annex \ref{lik-Luce}.
+
+In this method, the weights $\mathcal{W}$ are the quality estimates of the objects. In order to follow the convention that lower latent quality estimate represent higher scores, we will transform them as follows:
+\begin{gather*}
+\theta_i^{\ pl-lu} = (1 - w_i)
+\end{gather*}
+We then estimate the final ordering of the objects by sorting the weights $\mathcal{W}$ in ascending order. To estimate the weight parameters, we  fit a Plackett-Luce model using an R implementation by Turner et al. [@turner_modelling_2020]. 
+
+The Plackett-Luce model provides an estimate of the latent quality $\hat\theta_{i}^{\ pl-luce}$ of each object from the ranking data. Figure \ref{fig:pl} shows the latent quality estimates for the ten best objects according to this model. This model would accept the three objects; x25, x19, and x21. The difference in latent quality between the third place and the fourth place object is very low. The exact latent quality values are provided in Table \ref{tab:pl}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_pluce.png}
+    \caption{Latent quality estimates of the ten best objects according to the Plackett-Luce model (lower is better).}
+    \label{fig:pl}
+\end{figure}
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x25 & x19 & x21 & x17 & x4 & x20 & x22 & x23 & x13 & x3, x16\\
+        \hline
+        \textbf{$\hat{\theta}_i^{\ pl\text{-}lu}$} & 
+        0.697 & 0.827 & 0.860 & 0.884 & 0.931 & 0.946 & 0.956 & 0.960 & 0.971 & 0.985 \\
+        \hline
+    \end{tabular}
+    \renewcommand{\baselinestretch}{1}
+    \caption{Latent quality estimates of the 10 best objects according to the Plackett-Luce model sorted from best to worst.}
+    \label{tab:pl}
+\end{table}
+
+
+### Mallows
+
+The Mallows model is a distance-based ranking method which considers a true underlying ranking order $R^* \in \mathcal{L}(\mathcal{O})$ and assumes the assessors are imperfect judges trying to reproduce this ranking [@mallows_non-null_1957]. The probability of observing a specific ranking order $R_j \in \mathcal{L}(\mathcal{O})$ is defined as:
+
+
+\begin{gather*}
+\mathbb{P}[R_j| R^* , \eta] = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \\
+d(R_j, R^* ) = \sum_{i,l = 1}^n \mathbb{1}\{o_i \ \ {\succ}_{R_j}  \ \ o_l \quad \text{and} \quad o_l \ \ {\succ}_{R^*}  \ \ o_i\} \\
+\psi_{\mathcal{O}}(\eta) = \sum_{\mathcal{L}(\mathcal{O})}  \exp(-\eta \ \ d(R_j, R^*))
+\end{gather*}
+where $\psi_{\mathcal{O}}(\eta)$ is a normalizing constant, and $d(\cdot,\  \cdot)$ is the Kendall distance (minimum sum of adjacent swaps) between two linear orders. The notation $o_i \ \ {\succ}_{R_j}  \ \ o_l$ indicates that the object $o_i$ is ranked higher than $o_l$ in the true ranking order $R_j$, conversely $o_l \ \ {\succ}_{R^*}  \ \ o_i$ indicates that $o_l$ is ranked higher than $o_i$ in the true ranking order $R^*$. The $\eta$ parameter\footnote{In literature $\eta$ is often denoted as $\theta$. In this thesis, we use $\eta$, as $\theta$ is used to denote object quality.} represents a measure of similarity between the objects $\mathcal{O}$. A large $\eta$ implies that the distribution of the ranking data $R$ is closely concentrated around the true underlying rank $R^*$, while an $\eta$ of 0 implies that the distribution of the ranking data $R$ is uniform across the linear orders $\mathcal{L}(\mathcal{O})$. Using this method, the final ordering of the objects $\mathcal{F}_{mlw}(\mathcal{O})$ is $\hat{R^*}$. To fit the Mallows model, we will use an R implementation by Sorensen et al. [-@mallows_r].
+
+The Mallows model provides an estimate of the true underlying ranking $\hat{R}^{*\ mlw}$ of the objects from the ranking data. Figure \ref{fig:mallows} shows the rank estimates for the ten best objects according to this model. This model would accept the objects x17, x25, and x19. The exact ranking values are provided in Table \ref{tab:mallows}.
+
+\renewcommand{\baselinestretch}{1}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_mallows.png}
+    \caption{Underlying ranking of the ten best objects according to the Mallows model (lower is better).}
+    \label{fig:mallows}
+\end{figure}
+
+
+\renewcommand{\baselinestretch}{1.5}
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x25 & x19 & x21 & x4 & x23 & x20 & x16 & x13 & x22\\
+        \hline
+        \textbf{$\hat{R}_i^{\ mlw}$} & 
+        1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+        \hline
+    \end{tabular}
+    \renewcommand{\baselinestretch}{1}
+    \caption{Ranking order of the 10 best objects according to the Mallows model sorted from best to worst.}
+    \label{tab:mallows}
+\end{table}
+
+
+\renewcommand{\baselinestretch}{1}
+
+
+
+### Thurstonian Case V model
+
+In Thurstonian case V modelling, the ranking order is assumed to be determined by drawing from latent random variables $z_{i}$ (as discussed in @sec-tuhrst). The ranking orders $R_j$ given by the assessors $j = \{1, ..., m\}$ is assumed to be determined by sorting a set of of $i = \{1, ..., n\}$ drawings of a random variables0 $z_{i}$ in descending order. In this thesis, we use the fifth case of the model as described in  [@thurstone_law_1927] to define the following:
+
+
+\begin{gather*}
+z_{i} \sim N(\mu_i ,\ \sigma^2)
+\end{gather*}
+where $\mu_i$ is a latent quality variable for object $o_i \in \mathcal{O}$ and $\sigma$ is the noise in the perception of this quality. The noise $\sigma^2$ is assumed to be the same in the perception of all object. This model is underdefined, we therefore add the following constraints: $\sigma^2 = 1$ and $\mu_n = 0$. A  formulation of the likelihood of the parameter $\mu$ using this constraint is available in [@maydeu-olivares_thurstones_2004]. We then define the latent quality variable as follows:
+\begin{gather*}
+\theta_{i}^{\ thurst} = -\mu
+\end{gather*}
+The final ordering of the objects by sorting the latent quality estimate $\theta_{i}^{\ thurst}$ in ascending order. In this thesis, we fit the Thurstonian model using an R implementation by Revelle [-@r_psych]. 
+
+The Thurstonian case V model provides an estimate of the latent quality $\hat\theta_{i}^{\ thurst}$ of the objects from he ranking data. Figure \ref{fig:thurst} shows the rank estimates for the ten best objects according to this model. This model would accept the objects x25, x19, and x17. The exact latent quality estimates $\hat\theta_{i}^{\ thurst}$ are provided in Table \ref{tab:thurst}.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_thurst.png}
+    \caption{Latent quality of the 10 best objects according to the Thurstonian case V model (lower is better)}
+    \label{fig:thurst}
+\end{figure}
+
+
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x25 & x19 & x17 & x21 & x4 & x23 & x20 & x13 & x16 & x22\\
+        \hline
+        \textbf{$\hat{\theta}_i^{\ thurst}$} & 
+        -2.61 & -2.59 & -2.48 & -1.49 & -1.27 & -0.76 & -0.41 & -0.21 & -0.2 & -0.14 \\
+        \hline
+    \end{tabular}
+    \renewcommand{\baselinestretch}{1}
+    \caption{Latent quality estimates of the 10 best objects according to the Thurstonian case V model sorted from best to worst.}
+    \label {tab:thurst}
+\end{table}
+
+
+\renewcommand{\baselinestretch}{1}
+
+
+
+## Combined Models
+
+Combined models join the likelihood of both scoring and ranking models. We hypothesize that this can improve the accuracy in the prediction of the final ordering as both types of data are taken into account. 
+
+### Mallows-Binomial
+
+The Mallows-binomial model, as it's name suggests, is a model based on a combination of the Mallows model for ranking and a binomial model for scores. While the Mallows model is defined in the previous section (see Section \ref{rank_mod}), we have yet to define the binomial model for scores.
+
+The binomial model for scores assumes that the scores given to the objects are ordinal, equally spaced and can be modelled by a binomial distribution. [@pearce_unified_2022] Reformulated from the perspective of the scoring data, each object has it's own Binomial distribution, and the assessors' scores given to each object are assumed to be independent observations of these distributions. The model can be formulated as follows:
+\begin{gather*}
+y_i | \pi_i, l \  \sim  \  Bin(\pi_i, l) \\
+\mathbb{P}[y | \pi_i, l] = \binom{l}{y} \pi_i^x (1-\pi_i)^{l-x}
+\end{gather*}
+where scores have $l$ levels and $\pi_i$ is the underlying quality of an object $o_i$. The expected score of an object $o_i$ is $l \cdot \pi_i$.
+
+Combining the Binomial model with the Mallows model provides the following probability distribution:
+\begin{gather*}
+\mathbb{P}[R_j, S_j | \pi, \eta]  = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \times \prod_{i=1}^{n} \binom{l}{y_{ij}} \pi_i^{x_i} (1 - \pi_i)^{l-x} \\
+\pi = [\pi_1, ..., \pi_n], \quad R^* = \text{Order}(\pi), \quad \eta > 0
+\end{gather*}
+
+This model incorporates $n + 1$ joint observations per assessor, with $n$ scoring observations and $1$ ranking observation. It jointly models the ranking and the scoring data by assuming the underlying ranking order $R^*$ is dependent on the ordering of $\pi$. Using this method we assume the final ordering of the objects is $\hat{R}^{*\ mbin}$. In this thesis, we fit the Mallows-Binomial model using an R implementation by Pearce [-@rankrate]. This implementation also includes a bootstrapped uncertainty estimate, which we provide in the results below.
+
+The Mallows-binomial model provides an estimate of the true underlying ranking $\hat{R}^{*\ mbin}$ from both the scoring data and the ranking data.  This model would accept the objects x17, x25 and x19. The exact ranking values are provided in Table \ref{tab:mbin}.
+
+
+\renewcommand{\baselinestretch}{1}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_mbin_ranks.png}
+    \caption{Rank and bootstraped uncertainty of the 10 best objects according to the Mallows-Binomial model (lower is better)}
+    \label{fig:mallows_bin_ranks}
+\end{figure}
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x25 & x19 & x21 & x4 & x23 & x20 & x22 & x13 & x16\\
+        \hline
+        \textbf{$\hat{R}^{*\ mbin}$} & 
+        1-2 & 2-3 & 2-3 & 4 & 5 & 6-8 & 7-8 & 7-10 & 8-10 & 8-10 \\
+        \hline
+    \end{tabular}
+    \renewcommand{\baselinestretch}{1}
+    \caption{Underlying quality estimates of the 10 best objects according to the Mallows-Binoial model sorted from best to worst.}
+    \label {tab:mbin}
+\end{table}
+
+
+<!-- \begin{figure}[H] -->
+<!--     \centering -->
+<!--     \includegraphics[width=0.7\linewidth]{figures/results/res_mbin_scores.png} -->
+<!--     \caption{Latent quality of the 10 best objects according to the mallows-binomial model (lower is better)} -->
+<!--     \label{fig:mallows_bin_ranks} -->
+<!-- \end{figure} -->
+
+
+## Comparison Between Models
+
+TODO Describe and discuss
+
+
+\renewcommand{\baselinestretch}{1.5}
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Position} &
+         1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10\\
+        \hline
+        \textbf{$\mathcal{F}_{mean}(\mathcal{O})$} & 
+          x17 & x19 & x25 & x21 & x4 & x23 & x22 & x20 & x6 & x3 \\
+        \textbf{$\mathcal{F}_{mbin}(\mathcal{O})$} &  
+          x17 & x25 & x19 & x21 & x4 & x23 & x22 & x20 & x6 & x3 \\
+        \hline
+        \hline
+        \textbf{$\mathcal{F}_{pl-lu}(\mathcal{O})$} & 
+          x25 & x19 & x21 & x17 & x4 & x20 & x22 & x23 & x13 & x3, x16 \\
+        \hline
+        \textbf{$\mathcal{F}_{mlw}(\mathcal{O})$} & 
+          x17 & x25 & x19 & x21 & x4 & x23 & x20 & x16 & x13 & x22 \\
+        \hline
+        \textbf{$\mathcal{F}_{thurst}(\mathcal{O})$} & 
+          x25 & x19 & x17 & x21 & x4 & x23 & x20 & x13 & x16 & x22 \\
+        \hline
+        \hline
+        \textbf{$\mathcal{F}_{mbin}(\mathcal{O})$} &
+          x17 & x25 & x19 & x21 & x4 & x23 & x20 & x22 & x13 & x16 \\
+        \hline
+    \end{tabular}
+    \renewcommand{\baselinestretch}{1}
+    \caption{Final Ordering of the ten best objects according to all models.}
+    \label {tab:mbin}
+\end{table}
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/results/res_z_score.png}
+    \caption{Z-score results}
+    \label{fig:zscore}
+\end{figure}
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/results/res_fin_ord.png}
+    \caption{Final ordering of best objects according to all models}
+    \label{fig:zscore}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+<!-- # Results -->
+
+<!-- This section provides a summary of the results, and a plot of the results for each method. These results are then followed by a table comparing these models. -->
+
+<!-- ## Models using Scoring Data -->
+
+<!-- ### Model of Means -->
+
+<!-- The model of means provides an estimate of the latent quality of each object $\hat{\theta}_i^{\ mean}$ but does not provide a measure of its uncertainty. Only the scores given to each proposal are taken into account in the estimation of the final ordering. -->
+
+
+
+
+<!-- ## Models Using Ranking Data -->
+
+<!-- ### Plackett-Luce -->
+
+<!-- The Plackett-Luce model provides an estimate of the latent quality of each object $\hat{\theta}_i^{\ pl\text{-}lu}$ but does not provide any measure of uncertainty. Only the ranks given to each proposal are taken into account in the estimation of the final ordering. -->
+
+
+
+
+<!-- ### Mallows -->
+
+
+
+<!-- ### Normally distributed Thurstonian model -->
+
+<!-- TODO -->
+
+
+<!-- ## Joint-Modelling -->
+
+
+<!-- ### Mallows-binomial -->
+
+<!-- The Mallows-binomial model provides both an estimate of the true underlying ranking $R^{*\ mlw-bin}$ and of the underlying quality $\theta^{\ mlw-bin}_i$ of the objects. It also provides a measure of uncertainty. Both ranking and scoring are take into account when estimating these values. -->
+
+<!-- \begin{figure}[H] -->
+<!--     \centering -->
+<!--     \includegraphics[width=0.7\linewidth]{figures/results/res_mbin.png} -->
+<!--     \caption{Results of the Mallows-binomial model (lower is better).} -->
+<!--     \label{fig:m-bin} -->
+<!-- \end{figure} -->
+
+
+<!-- \renewcommand{\baselinestretch}{1.5} -->
+
+<!-- \begin{table}[H] -->
+<!--     \small -->
+<!--     \centering -->
+<!--     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|} -->
+<!--         \hline -->
+<!--          \textbf{Grant ID} & -->
+<!--          X17 & X25 & X19 & X21 & X4 & X23 & X20 & X16 & X13 & X22\\ -->
+<!--         \hline -->
+<!--         \textbf{$\hat{\theta}_i^{\ mlw-bin}$} &  -->
+<!--         0.1125 & 0.125 & 0.125 & 0.1425 & 0.175 & 0.1875 & 0.1944 & 0.1972 & 0.225 & 0.225 \\ -->
+<!--         \hline -->
+<!--         \textbf{$\hat{R}_i^{* \ mlw-bin}$} & -->
+<!--         1 & 2-3 & 2-3 & 4 & 5 & 6-7 & 7-8 & 6-9 & 9-11 & 9-11 \\ -->
+<!--         \hline -->
+<!--     \end{tabular} -->
+<!--     \caption{Results of the Mallows model sorted from best to worst.} -->
+<!-- \end{table} -->
+
+<!-- \renewcommand{\baselinestretch}{1} -->
+
+
+
+# Discussion
+
+<!-- Skating system ballroom dancing (Xavier Mora 2001) ? -->
+
+<!-- GENERAl
+
+Some of the missing data in the ranking data set is not missing at random, if an assessor cannot assess an object due to a conflict of interest, we may have issues because it will not be in the top-6 even if it deserves a place there (!!!)
+
+-->
+
+
+<!--    MALLOWS
+
+
+This means a large $\eta$ also hints to clear differences in quality between the objects in $\mathcal{O}$, while a low $\eta$ hints toward the objects in $\mathcal{O}$ being of very similar quality. -->
+
+
+### Steps towards joint hierarchical model
+
+
+to be defined...
+
+
+\appendix
+# Annex {.annexe}
+
+
+
+## Bayesian Estimations
+
+In frequentist models, we define fixed parameters of interest, and then subsequently define methods to find a most likely value for these parameters using data (usually by using maximum likelihood estimation) [@held_likelihood_2020]. In Bayesian modelling, we also define parameters of interest. However, we assume that these parameters are not fixed, but follow distributions themselves. The focus is shifted from determining the most likely value for each parameter towards determining the most likely distribution for each parameter [@held_likelihood_2020]. In order to determine these distributions we use Bayes' theorem to obtain:
+\begin{equation}
+f(\symbf{\beta}| D) \propto  f(D | \symbf{\beta}) * f(\symbf{\beta}) \label{eq-bayes}
+\end{equation}
+where $\symbf{\beta} = \{\beta_1, ..., \beta_q\}$ are the parameters of interest and $D$ are the data used (see Annex \ref{bayest} for derivation). We denote $f(\symbf{\beta}| D)$ the posterior distribution; the distribution of the parameters after having taken the data $D$ into account, and $f(\symbf{\beta})$ the prior distribution; our belief about the distribution of the parameters before taking the data into account. The function $f(D | \symbf{\beta})$ is the likelihood of observing the data given the parameters of interest.
+
+In the Bayesian hierarchical model and the joint hierarchical model (see Section \ref{methods}), there exists no closed form solution to the operation $f(D | \symbf{\beta}) * f(\symbf{\beta})$.  In order to obtain results, we use numerical approximation methods such as Markov Chain Monte Carlo (MCMC) and Integrated Nested Laplace Approximations (INLA). These two methods are described below. Details on these methods can be found in Annex \ref{mcmc}.
+
+
+## Bayes' Theorem {#sec-bayest}
+\label{bayest}
+Baye's theorem is defined as follows:
+\begin{equation*}
+\mathbb{P}[A|B] = \frac{\mathbb{P}[B|A] * \mathbb{P}[A]}{\mathbb{P}[B]}
+\end{equation*}
+
+In order to use it in modelling we reformulate it with $A$ as the parameters of interest and $B$ the data we have obtained. We define parameters of interest $\symbf{\beta} = \{\beta_1, ..., \beta_s\}$ and data $D$ to obtain:
+
+\begin{equation*}
+f(\symbf{\beta}| D) =  \frac{f(D | \symbf{\beta}) * f(\symbf{\beta})}{f(D)}
+\end{equation*}
+
+
+where $f(\symbf{\beta}| D)$ is the posterior distribution of $\symbf{\beta}$, $f(\symbf{\beta})$ the prior distribution of  $\symbf{\beta}$, $f(D | \symbf{\beta})$ the likelihood function of our model and  $f(D)$ a normalizing constant. $f(D)$ is normally estimated through marginalization:
+
+\begin{equation*}
+f(D) = \int^{\infty}_{-\infty} f(\symbf{\beta}, D) d\symbf{\beta} = \int^{\infty}_{-\infty} f(D | \symbf{\beta}) f(\symbf{\beta}) d \symbf{\beta}
+\end{equation*}
+
+This formulation of $f(D)$ in most cases does not have a closed form solution (unless the prior is conjugate to the likelihood). To avoid having to estimate it, it is often ignored and methods to estimate posterior distributions using only a proportionality constraint are used:
+
+\begin{equation*}
+f(\symbf{\beta}| D) \propto  f(D | \symbf{\beta}) * f(\symbf{\beta}) \end{equation*}
+
+
+
+## Markov Chain Monte Carlo {#mcmc}
+
+MCMC methods are based on two concepts, Monte Carlo simulations, and Markov chains. This section will first introduce these concepts individually, and then explain how they can be used in combination to estimate a posterior distribution, for example using Gibbs sampling.
+
+### Monte Carlo {#sec-mc}
+
+Monte Carlo simulations are a class of numerical methods that generate a series of random independent samples in order to estimate the solution to complex mathematical problems. These simulations are guaranteed, with a long enough simulation, to converge towards the analytical solution of the problem [@metropolis_monte_1949]. Converging is defined as progressively approaching the solution of a problem as the number of simulated iterations increases (for more on convergence see @sec-conv). In statistics, these simulations are often used to estimate integrals of density or probability mass functions, as well as generating posterior distributions.
+
+Naïve Monte Carlo simulations work well on simple problems, but are heavily limited by the dimensionality of the problem they are solving. As dimensionality increases, both the size of the domain to explore using random numbers, and the number of iteration required for convergence increase exponentially. Figure \ref{fig:mc_normal} shows an example of two Monte Carlo simulation estimating the integral of a normal distribution for a small, and larger parameter space. 
+
+<!-- However, most of this domain contributes only very little to the final solution. Adding a Markov-chain component to the Monte Carlo simulation enables us to use this property, and spend more time exploring and computing the high contribution domains while reducing the time spent on low-contribution domains of the functions we are analysing. This drastically reduces the computation time (Metropolis et al. 1953).  -->
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/MCMC_normal_estimation.png}
+    \caption{Convergence in the evaluation of the integral of a normal distribution over iterations of a naïve monte-carlo simulation. \textbf{In blue}: An estimation integrating between -5 and 5, which converges between 30000 and 40000 iterations. \textbf{In orange}: An estimation integrating between -20 and 20, which fails to converge after 100000 iterations. Note: This is not a trace plot but the integral estimate provided at each amount of iteration.}
+    \label{fig:mc_normal}
+\end{figure}
+
+
+### Markov Chain
+
+To improve the computational performance of Monte-Carlo simulations, we can use Markov-chains. Markov chains are series of numbers ${x^{(1)}, x^{(2)} , ..., x^{(q)}}$ in which any step $x^{(q)}$ depends, and only depends on the previous step $x^{(q-1)}$. By using Markov-chains in our Monte Carlo simulation, we no longer use random independent samples to generate solutions to our problems. This trick is used by MCMC to spend more time exploring the high contribution domains of the function to analyse. For example, in estimating the integral of a normal distribution, the domain which will contribute the most to the integral is between -4 and +4, values beyond this domain contribute little to the integral (see figure \ref{fig:mc_normal}). Only spending time in the "important" domains drastically reduces computation time [@metropolis_equation_1953]. In order to guarantee convergence of the MCMC towards the true solution despite the dependent samples, three more constraints are needed in the definition of the Markov Chain: Irreducibility, Aperiodicity and Detailed balance [@hanada_mcmc_2022].
+
+
+::: {.callout-note title="**Definitions: Irreducibility, Aperiodicity and Detailed Balance**" }
+
+**Irreducibility**: A Markov chain is said to be irreducible if there exists a transition between any pair $x$ and $x'$ in a finite number of steps $s$.
+
+**Aperiodicity**: A Markov chain is said to be aperiodic, if the greatest common divisor of all the possible number of steps $\symbf{s} = \{s_1, s_2, ..., s_q\}$ between $x$ and itself is 1.  
+
+**Detailed balance** The transition probability $\mathbb{P}[T(x \rightarrow x')]$ between any $x$ and $x'$ satisfy the following property:
+\begin{gather*}
+\mathbb{P}[x] * \mathbb{P}[T(x \rightarrow x')] = \mathbb{P}[x'] * \mathbb{P}[T(x' \rightarrow x)]
+\end{gather*}
+
+:::
+
+### Metropolis Hasting algorithm {#sec-mh}
+
+Markov-chains and Monte Carlo simulations can be combined into the Metropolis-Hasting algorithm [@hastings_monte_1970]. This algorithm is the basis of MCMC algorithms such as Gibbs sampling (see Section @sec-gibbs) and the Hybrid Monte Carlo (HMC) algorithm. In this section, we will first introduce the Metropolis algorithm and extend it to the Metropolis-Hasting algorithm. The next section will introduce Gibbs sampling which is used in the current implementation of the Bayesian hierarchical model. 
+
+The Metropolis algorithm draws samples from a probability distribution $\mathbb{P}[x]$, provided that we have a function $f(x)$ that is proportional to its distribution. The Markov chain in the Metropolis algorithm is generated as follows.
+
+::: {.callout-note title="**Definition: Metropolis algorithm**" }
+
+**1. Initiate the Markov chain**: Choose a value for $x^{(1)}$, either randomly, or using prior knowledge about the target distribution. 
+
+**2. Propose a candidate $\Delta x$**: Choose a real number $\Delta x$ randomly and propose $x^{(q+1)} = x^{(q)} + \Delta x$. The random generation process of $\Delta x$ must be symmetric around 0 in order to satisfy the irreducibility, aperiodicity and detailed balance conditions of the Markov-chain. 
+
+**3. Perform the Metropolis test**: The candidate $x^{(q+1)}$ is accepted with a probability:
+\begin{equation*}
+\text{min}(1, \frac{f(x^{(q+1)})}{f(x^{(q)})})
+\end{equation*}
+If the candidate is not accepted a new candidate is proposed using step two of this algorithm.
+
+**4. Repeat until convergence**: Repeat from step two until the distribution of the samples generated by the Markov-chain converges.
+
+:::
+
+This algorithm satisfies irreducibility, aperiodicity and the detailed balance of the Markov chain, and is therefore guaranteed to converge towards the target distribution, within a finite amount of iterations [@hanada_mcmc_2022]. 
+
+Metropolis-Hasting algorithms, extends this algorithm by relaxing the constraints of detailed balance in generating new candidates. Instead, we allow candidates to be generated using any arbitrary function, as long as the series generated is still an irreducible and aperiodic Markov chain. To still maintain the detailed balanced conditions necessary for the chain to converge we modify the acceptance probability [@hastings_monte_1970]. This provides the following algorithm:
+
+::: {.callout-note title="**Definition: Metropolis-Hasting algorithm**" }
+
+**1. Initiate the Markov chain**: Choose a value for $x^{(1)}$, either randomly, or using prior knowledge about the target distribution. 
+
+**2. Propose a candidate value**: Choose a new candidate value for the chain using an arbitrary function$f(x^{(q+1)} | x^{(q)})$.
+
+**3. Perform the Metropolis test**: The candidate $x^{(q+1)}$ is accepted with a probability: 
+\begin{equation*}
+\text{min}(1, \frac{f(x^{(q+1)}) * f(x^{(q)} | x^{(q+1)}) }{ f(x^{(q)}) * f(x^{(q+1)} | x^{(q)}))}
+\end{equation*}
+If the candidate is not accepted a new candidate is proposed using step two of this algorithm.
+
+**4. Repeat until convergence**: Repeat from step two until the distribution of the samples generated by the Markov-chain is converges
+
+:::
+
+The Gibbs algorithm and HMC algorithm are special cases of the Metropolis-Hasting algorithm with precisely specified candidate value functions $f(x^{(q+1)} | x^{(q)})$.
+
+
+### Gibbs Sampling {#sec-gibbs}
+
+Gibbs sampling is a Metropolis-Hasting algorithm used in order to estimate multivariate target distributions. Let us consider a target distribution $\mathbb{P}[\symbf{x} = {x_1, ..., x_r}]$ with a proportional distribution $f(\symbf{x})$ [@geman_stochastic_1984]. In Gibbs sampling, the candidate values $\symbf{x}^{(q+1)}$ are generated by using sequential conditional distributions:
+\begin{gather}
+x_a^{(q+1)} \sim f(x_a | x_1^{(q + 1)}, ..., x_{a-1}^{(q + 1)}, x_{a+1}^{(q)},  ..., x_{r}^{(q)})  \label{eq:gibbs} \\  
+\text{For all } x_r \in \symbf{x} \nonumber
+\end{gather}
+This model is sequential and updated values at stage $(q+1)$ and values at stage $(q)$ are both incorporated together in order to obtain new candidate values. Moreover, the distribution of $x_a^{(q+1)}$ depends on all other variable $x_{-a}$ but not on $x_a^{(q)}$ itself.  Using such a generation process for $\symbf{x}^{(q+1)}$ provides the following Metropolis test in the Gibbs sampling algorithm:
+\begin{equation*}
+\mathbb{P}[\text{acceptance}] = \frac{f(x_r^{(q+1)}) * f(x_r^{(q)}) | x_r^{(q + 1)}) }{ f(x_r^{(q)}) * f(x_r^{(q+1)} | x_r^{(q)})}
+\end{equation*}
+and by definition:
+\begin{equation*}
+\quad x_r^{(q+1)} \independent x_r^{(q)}
+\end{equation*}
+thus, 
+\begin{equation*}
+\mathbb{P}[\text{acceptance}] = \frac{f(x_r^{(q+1)}) * f(x_r^{(q)}) }{ f(x_r^{(q)} * f(x_r^{(q+1)}) } = 1
+\end{equation*}
+
+Thus, the Metroopolis test is not needed in order to obtain the distribution $\mathbb{P}[\symbf{x}]$. Gibbs sampling was originally defined by Stuart and Donald Geman [-@geman_stochastic_1984]. However, we use here a simpler definition as formulated in Hanada and Matsuura [-@hanada_mcmc_2022]:
+
+
+::: {.callout-note title="**Definition: Gibbs sampling algorithm **" }
+
+**1. Initiate the Markov chain**: Choose a value for $\symbf{x^{(1)}} = \{ x_1^{(1)}, ... x_q^{1}\}$, either randomly, or using prior knowledge about the target distribution. 
+
+**2. Propose a new value for each $\symbf{x}^{(q+1)}$**: Using the procedure described in equation (\ref{eq:gibbs})
+
+**3. Repeat until convergence**: Repeat from step two until the distribution of the samples generated by the Markov-chain is converges.
+
+:::
+
+### MCMC for posterior distribution estimation
+
+All the definitions in this section were described as estimating a distribution $\mathbb{P}[x]$ given an arbitrary proportional function $f(x)$. To obtain the posterior distribution as described in Equation (\ref{eq-bayes}). We reformulate the MCMC algorithm as follows:
+\begin{gather*}
+\mathbb{P}[x] = f(\symbf{\beta} | D) \\
+f(x) = f(D | \symbf{\beta}) \cdot f(\symbf{\beta})
+\end{gather*}
+and we have:
+\begin{gather*}
+f(\symbf{\beta}| D) \propto  f(D | \symbf{\beta}) * f(\symbf{\beta}) \quad \quad \Rightarrow \quad \quad \mathbb{P}[x] \propto f(x)
+\end{gather*}
+Thus, we can simply sample from a likelihood $f(D | \symbf{\beta})$ and a prior distribution $f(\symbf{\beta})$, in order to estimate a posterior distribution $f(\symbf{\beta}| D)$.  
+
+
+### Extra considerations
+
+Trace plots are often used to assess the convergence and quality of a MCMC simulation. Trace plots are plots that shows the progression of the sampled parameter ($y$-axis) across the Markov chain's iterations (on the $x$-axis). On such plots, we can identify if models converge and the number of iterations taken in order to converge (see Figure \ref{fig-trace}). If the parameter is stably oscillating around a parameter value, we consider the model as converged.
+
+
+As can be seen in the trace plot (see Figure \ref{fig-trace}), the first iterations of a MCMC simulation are heavily correlated with the Markov chain's starting value. Moreover, even when a Markov-chain converges, the samples it generates are autocorrelated. In order to limit the effect of these correlations on the solution provided by MCMC simulations, we use burn-in, skips and bins [@hanada_mcmc_2022]. Burn-in simply consists in discarding the samples in the Markov-chain that are deemed correlated with the starting value, to determine the number of samples to discard, trace plots are often used. Skipping and binning are used in an attempt to eliminate the correlation between samples after the burn-in period. Skipping (also called thinning), as it's name indicates, involves only taking a fraction of the observation produced by the Markov chain (for example 1 in 10 or 1 in 20 samples in the chain) in order to estimate the parameter of interest. If this skipping jump is longer than the autocorrelation structure, we obtain independent samples. Binning follows the same principle but instead of skipping samples, it groups them together into bins. The average of each bin is then taken as an independent observation. Multiple methods exist to determine the correct skipping or binning size, the most common of which is the Jackknife method [@efron_jackknife_1981]. A complete description of these methods is beyond the scope of this thesis. 
+
+
+### Convergence  {#sec-conv}
+
+In @sec-mc we state that given a long enough chain, a MCMC simulation will always converge towards the true analytical solution of a problem. This, while true, is a misleading statement. Indeed, as we are limited by computing capabilities, we are not always able to run a chain until it converges towards the solution of a problem. The easiest way to check if a simulation has converged, is by running it multiple times with different starting values (in MCMC this is denoted as multiple chains) and using a trace plot to visualise all chains (see Figure \ref{fig-trace}). If all chains converge to the same solution, the MCMC model can be considered converged. Despite its simple formulation, visual confirmation is often not sufficient in research. Therefore, there also exist a series of different diagnostic tools based on the variance within and between the chains, the most common of which is the $\hat{R}$ measure [@gelman_inference_1992]. A description of these methods is also beyond the scope of this thesis, a comparative study of these diagnostics can be found in  Roy [-@roy_convergence_2020].
+
+
+In all cases where the model does not converge, the underlying reason is either that the model is misspecified or that the Markov chain is not long enough. A misspecified model can be modified and simplified. However, due to computing limitations, it is most often not possible to run a simulation for longer. In this case, the only option that remains is to make the simulation converge faster. This can either be done by simplifying the model, or, if the Metropolis-Hasting algorithm is used, by selecting a more appropriate function to determine new candidate values (see Section @sec-mh).
+
+
+Despite all this freedom, sometimes models with multiple parameters and intricate distributions are too complicated to be solved using MCMC simulations, in these cases, we have to turn towards other estimation methods. In our case, as we are estimating the parameters of hierarchical Gaussian models, we will be turning towards the Integrated Nested Laplace Approximation [@rue_approximate_2009].
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/trace_plots.png}
+    \caption{Trace plots of an MCMC simulation estimating a normal distribution with a mean of 0 and standard deviation of 1. \textbf{On the left:} Trace of a single chain with visible burn-in period and autocorrelation structures. \textbf{On the right:} Trace of three chains converging towards the same solution.}
+    \label{fig-trace}
+\end{figure}
+
+
+## Integrated Laplace Approximation {#inla}
+
+TODO when reimplemented in INLA
+
+
+
+
+## Generalisation of the normally distributed Thurstonian model
+
+We modify the normally distributed Thurstonian model defined in Yao and Böckenholt [-@yao_bayesian_1999] to define the following Thurstonian model:
+
+\begin{gather*}
+z_{i} \sim N(\theta_{i}^{\ thurst},\ \sigma_{i}^2)
+\end{gather*}
+where $\theta_{i}^{\ thurst}$ is the latent quality variable for object $o_i \in \mathcal{O}$ and $\sigma_{i}$ is the noise in the perception of this quality. We can also write in a general setting:
+\begin{gather*}
+\symbf{Z_j} \sim N(\symbf{\theta},\ \symbf{\Sigma})
+\end{gather*}
+
+The vector of all scores $\symbf{Z_j} = \{z_1, ..., z_n\}$  drawn by an assessor $j$ can be defined as an $n$-variate normal distribution with mean $\symbf{\theta} = \{ \theta_1^{\ thurst}, ..., \theta_n^{\ thurst}\}$ and covariance matrix $\symbf{\Sigma} = diag(\sigma_1, ..., \sigma_n)$.
+
+
+There exists no closed-form analytical solution to estimate the values of $\symbf{\theta}$ and $\symbf{\Sigma}$ from ranking data, an open form solution can be found in Annex \ref{lik-thurst}. However, this estimation procedure is very computationally intensive due to the high amount of integration required to obtain results. To solve this issue, parameter estimation can be done using Gibbs sampling [@yao_bayesian_1999 and @johnson_bayesian_2013]. No implementation of this algorithm was available online.
+
+
+<!-- In this thesis, we will implement our own model using the INLA framework [@rue_approximate_2009] as explained in Gomez-Rubio [-@gomez-rubio_bayesian_2020] in order to estimate the parameters $\symbf{\theta}$ and $\symbf{\Sigma}$. The details of this implementation can be found in Section TODO. Using this method, we estimate the final ordering of the objects by ordering the latent quality parameters $\theta$ in descending order. -->
+
+
+
+## Likelihoods
+
+### Plackett-Luce {#lik-Luce}
+
+Silverberg (1980) states that the Plackett-Luce ranking process can be regarded as a series of drawing from a vase. We consider a vase containing an infinite amount of balls of $n$ colours, each colour associated with an object $o_i \in \mathcal{O}$. The frequency of each specific ball colour in the vase is proportional to the weights $W$ assigned to $O$. We then draw in a series of phases from the vase. In the first phase, the first colour drawn determines the object in first position of the ranking. In each subsequent phase, the first colour drawn that has not already been drawn determines the next objects in the ranking. We perform this procedure until all ball colours (all objects) are drawn.
+
+Using the vase model representation of the Plackett-Luce model, we can state the probability of observing a specific linear order as follows:
+
+\begin{gather*}
+\mathbb{P}[R_j| \mathcal{W}] = \frac{w_{1}}{\sum_{i = 1}^{n}w_i}  * \frac{w_{2}}{\sum_{i \neq{1}}^{n}w_i} * ... * \frac{w_{n}}{w_n}
+\end{gather*}
+
+If we consider a set $\mathcal{O}_x$, the set of alternatives that have not been ranked yet at stage $x$ of the model and $o_{i_x}$ the object selected at stage $x$ of the model, we can rewrite the likelihood more compactly:
+
+\begin{gather*}
+\mathbb{P}[Rj| \mathcal{W}] = \prod_{x = 1}^{n} \frac{w_{i_x}}{\sum_{i \in  \mathcal{O}_x} w_i}
+\end{gather*}
+
+using this, we obtain the log-likelihood provided by one observation:
+
+\begin{align*}
+l(\mathcal{W} | R_j) = \mathbb{P}[R_j | \mathcal{W}] &= \log{\Bigl( \prod_{x = 1}^{n} \frac{w_{i_x}}{\sum_{i \in  \mathcal{O}_x} w_i} \Bigr)} = \sum_{x=1}^n \log{\Bigl( \frac{w_{i_x}}{\sum_{i \in  \mathcal{O}_x} w_i} \Bigr)} \\
+&= \sum_{x=1}^n \Bigl( \log(w_{i_x}) - \log(\sum_{i \in  \mathcal{O}_x} w_i) \Bigr)
+\end{align*}
+
+
+which in turn provides the general log-likelihood function: 
+
+\begin{gather*}
+l(\mathcal{W} | R) = \sum_{j = 1}^{m}  \Biggl( \sum_{x=1}^n \Bigl( \log(w_{i_x}) - \log(\sum_{i \in  \mathcal{O}_x} w_i) \Bigr) \Biggr)
+\end{gather*}
+
+
+
+<!-- other Formulation of Plackett-Luce -->
+
+<!-- \begin{gather} -->
+<!-- X(\mathcal{O}) = -->
+<!--   \begin{cases} -->
+<!--     1 & \text{if $o_1$ is in first position} \\ -->
+<!--     ... & \text{...} \\ -->
+<!--     n & \text{if $o_n$ is in first position} -->
+<!-- \end{cases} \quad -->
+<!-- f_{x} = -->
+<!--   \begin{cases} -->
+<!--     \mathbb{P}[r_{o_1} = 1| \mathcal{W}] & \text{if $x = 1$} \\ -->
+<!--     ... & ... \\ -->
+<!--     \mathbb{P}[r_{o_n} = 1| \mathcal{W}] & \text{if $x = n$} -->
+<!--   \end{cases} -->
+<!-- \end{gather}\ -->
+
+### Thurstonian {#lik-thurst}
+
+We first define the model as specified in Yao and Böckenholt [@yao_bayesian_1999]:
+\begin{gather*}
+\symbf{Z_j} \sim N(\symbf{ \bar{z}} + \symbf{\theta},\ \symbf{\Sigma})
+\end{gather*}
+Using $\symbf{Z}$, the probability of a specific object $o_i$ being ranked higher than an other object $o_l$ in a ranking order can be written as:
+\begin{align} \label{thurst_1}
+\mathbb{P}[o_i \succ o_l | \symbf{\theta}, \symbf{\Sigma}]  = \mathbb{P}[z_i \geq z_l] &= 
+\mathbb{P}[z_i - z_l \geq 0]\\
+&= \int_{0}^{\infty}\phi(z_i - z_l) \nonumber \\
+&= \int_{0}^{\infty}\frac{1}{\sqrt{2 \pi (\sigma_i + \sigma_l)}} \exp \bigl(- \frac{(x- (\theta_i-\theta_l))^2}{2(\sigma_i + \sigma_l)^2} \bigr) \nonumber
+\end{align}
+Moreover, the following property holds:
+\begin{gather} \label{thurst_2}
+\{o_i \succ o_l\} \wedge \{o_l \succ o_p\} \implies \{o_i \succ o_p\}
+\end{gather}
+Using equation (\ref{thurst_1}, \ref{thurst_2}) we can then define the probability of observing a full ranking order $R_j = [o_1 \succ o_2 \succ ... \succ o_n] \in \mathcal{L}(\mathcal{O})$ as:
+\begin{align*}
+\mathbb{P}[R_j | \symbf{\theta}, \symbf{\Sigma}] &=  \mathbb{P}[z_1 \succ z_2 \ \cap \ z_2 \succ z_3 \ \cap \ ... \  \cap z_{n-1} \ \succ \ z_{n}] \\
+&= \mathbb{P}[z_1 - z_2 \geq 0] \ \cdot \ \mathbb{P}[z_2 - z_3 \geq 0] \ \cdot \  ... \ \cdot \ \mathbb{P}[z_{n-1} - z_n \geq 0] \\
+&= \int_{0}^{\infty} \phi(z_1 - z_2) \cdot \ ... \ \cdot \int_{0}^{\infty} \phi(z_{n-1} - z_{n})
+\end{align*}
+which in turn provides the general likelihood function: 
+\begin{equation*}
+L(\symbf{\theta}, \symbf{\Sigma} | R) = \prod_{j=1}^m \mathbb{P}[R_j | \symbf{\theta}, \symbf{\Sigma}]
+\end{equation*}
+and log-likelihood function
+\begin{equation*}
+l(\symbf{\theta}, \symbf{\Sigma} | R) = \sum_{j=1}^m \log(\mathbb{P}[R_j | \symbf{\theta}, \symbf{\Sigma}])
+\end{equation*}
+
+
+## Convergence diagnostics in the Bayesian Hierarchical model  {#coda-hier}
+
+Convergence diagnostics were performed using the CODA package [@coda]. The posterior
+distribution of all parameters converged with $\hat{R} <= 1.003$ point estimates and 
+a multivariate potential scale reduction factors of $1.03$. The autocorrelation factors of all parameters dropped below $0.05$ after a lag of five iterations and no trace plot showed any sign of abnormal behavior across the four mcmc chains. We therefore conclude the model successfully converged.
+
+
+## Code availability
+
+## Declaration
+
+## Session Info
+
+
+
+\newpage
+## Bibliography
+
+\footnotesize
+
+<!-- OLD THINGSSSS
+::: {.callout-note title="**Definitions: Ranks, Scores and Data**" }
+
+**Alternatives** $\mathbf{\mathcal{A}}$ are the set of $n \ \epsilon \ \mathbb{N}$ objects to be ranked by assessors. In the context of grant proposals I will write $\mathcal{A} = \{p_i\}$ with $i \ \epsilon \ \{1, ..., n\}$
+
+\
+
+The score I define here is theoretically the set of scores for all the data set not just one observation
+
+**Scores** $\mathbf{\mathcal{S}(\mathcal{A})}$ are the set of grades given to all of $\mathcal{A}$. In the case of continuous data, I write: $\mathcal{S}(\mathcal{A}) \ \epsilon \ \{[a,b], ...\}$. In the case of ordinal data, I write $\mathcal{S}(\mathcal{A}) \ \epsilon \ \{\{1,...,K\}, ...\}$ with $K$ being the number of levels in the ordinal score 
+
+\
+
+**Linear orders** $\mathbf{\mathcal{L}(\mathcal{A})}$ are the set of all possible ranking orders of $\mathcal{A}$. For any pair of alternatives $a$,$b$ I will write $a$ $\succ$ $b$ if $a$ is preferred to $b$.
+
+\
+
+**Scoring data** $\mathbf{\mathbf{D_S} = (S_1, ..., S_n) \ \epsilon \ \mathcal{S}(\mathcal{A})}$ are an aggregation of the scores given by the $m$ assessors. The score given to a specific alternative $p_i$ by a specific assessor $j$ will be written $y_{i,j}$ with $i \ \epsilon \  \{1,...,n\}$ and $j \ \epsilon \ \{1, ..., m\}$.
+
+\
+
+**Rank data** $\mathbf{D_R}$ $= (R_1, ..., R_m) \ \epsilon \ \mathcal{L}(\mathcal{A})$ are an aggregation of the rankings given by the $m$ assessors. The ranking given by specific assessor $j$ to $\mathcal{A}$ will be written $R_j$ with $j \ \epsilon \ \{1, ..., m\}$.
+
+:::
+
+-->

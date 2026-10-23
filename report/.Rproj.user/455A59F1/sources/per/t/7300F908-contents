@@ -1,0 +1,285 @@
+
+
+library(ERforResearch)
+library(rjags)
+library(pander)
+library(here)
+library(coda)
+
+
+
+##########################
+# ER For research model  # ###################################################
+##########################
+
+dat <- read.csv(here("../data/clean/scores_long.csv"))
+
+
+dat$RandomRevID <- as.factor(dat$RandomRevID)
+dat$grant_id <- as.factor(dat$grant_id)
+
+
+### Using Simplified model doesn't fit 
+
+mcmc_sample_object <-
+  get_mcmc_samples(
+    data = dat, 
+    id_proposal = "grant_id", id_assessor = "RandomRevID",
+    grade_variable = "value",
+    path_to_jags_model = here("code/simple_jags_model.txt"),
+    seed = 42,
+    rhat_threshold = 1.05,
+    dont_bind = TRUE, 
+  )
+
+failed.jags()
+
+
+### Using normal fit
+
+
+mcmc_sample_object <-
+  get_mcmc_samples(
+    data = dat, 
+    id_proposal = "grant_id", id_assessor = "RandomRevID",
+    grade_variable = "value",
+    path_to_jags_model = "../code/default_jags_model.txt",
+    seed = 42,
+    rhat_threshold = 1.05,
+    dont_bind = TRUE,
+    n_chains = 3
+  )
+
+
+str(mcmc_sample_object)
+
+str(mcmc_sample_object$summary)
+
+str(mcmc_sample_object$samples$mcmc)
+
+mcmc_sample_object$conv_status
+
+
+ER_result <- get_er_from_jags(data = dat,
+                              id_proposal = "grant_id",
+                              id_assessor = "RandomRevID",
+                              grade_variable = "value",
+                              mcmc_samples = mcmc_sample_object)
+
+
+
+
+name_dat <-ER_result$rankings %>% 
+  mutate_if(is.numeric, function(x) round(x, 2)) %>% 
+  arrange(er)
+
+pander(name_dat)
+
+
+titles <- as.character(name_dat$id_proposal)
+
+titles
+
+
+plotting_er_results(ER_result, how_many_fundable = 5,
+                    draw_funding_line = FALSE)
+
+
+
+plot_er_distributions(mcmc_sample_object,
+                      n_proposals = sum(!duplicated(dat$grant_id)),
+                      number_fundable = 5, use_outer_inner = "outer", 
+                      title = "Coefficients according to the Hierarchical Model", 
+                      er = T, names_proposals = titles) +
+  theme(axis.text.x = element_text(size = 10),
+        axis.title.x = element_text(size = 12),
+        axis.text.y = element_text(size = 10),
+        axis.title.y = element_text(size = 12)) +
+  xlab("Proposal IDs") +
+  scale_y_continuous(breaks = 1:10, label = 1:10)
+
+
+
+
+
+plot_er_distributions(mcmc_sample_object,
+                      n_proposals = length(titles),
+                      number_fundable = 5, use_outer_inner = "inner", 
+                      title = "Coefficients according to the Hierarchical Model", 
+                      er = T, names_proposals = titles) +
+  theme(axis.text.x = element_text(size = 10),
+        axis.title.x = element_text(size = 12),
+        axis.text.y = element_text(size = 10),
+        axis.title.y = element_text(size = 12)) +
+  xlab("Proposal IDs") +
+  scale_y_continuous(breaks = 1:10, label = 1:10) +
+  scale_x_discrete(labels = titles)
+
+plot_er_distributions
+
+
+
+########################
+# Homemade JAGS model  # #####################################################
+########################
+
+dat <- read.csv("../data/clean/scores_long.csv")
+
+pander(dat)
+
+dat$RandomRevID <- as.character(paste0("x", dat$RandomRevID))
+
+dat$RandomRevID <- as.factor(dat$RandomRevID)
+dat$grant_id <- as.factor(dat$grant_id)
+
+pander(dat)
+str(dat)
+
+#
+### Defining model ------------------------------------------------------------
+#
+
+model_string <- '
+  model  {
+  
+  # Likelihood ---------------------------------------------------------------
+  
+    for (i in 1:n){
+      score[i] ~ dnorm(mu[i], tau_general)
+      mu[i] <- overall_m + id_quality[object_id[i]] + ass_effect[assessor[i]]
+    }
+  
+  # Priors for id and ass effect ----------------------------------------------
+  
+    for(j in 1:n_object){
+      id_quality[j] ~ dnorm (0, tau_object)
+    }
+    
+    for(k in 1:n_assessor){
+      ass_effect[k] ~ dnorm(0, tau_ass)
+    }
+  
+  
+  # Prior for overall_m (uninformed) ----------------------------------------
+  
+    overall_m ~ dnorm(0, 10^(-8))
+    
+  # Hyperpriors ------------------------------------------------------------
+  
+    sigma_g ~ dunif(0.000001,5)
+    tau_general <- 1 / (sigma_g^2)
+    
+    sigma_o ~ dunif(0.000001,5)
+    tau_object <- 1 / (sigma_o^2)
+  
+    sigma_ass ~ dunif(0.000001, 5)
+    tau_ass <- 1 / (sigma_ass^2)
+    
+  }
+
+'
+
+
+jags_dat <- list()
+
+jags_dat$score <- dat$value
+jags_dat$object_id <- dat$grant_id
+jags_dat$assessor <- dat$RandomRevID
+
+jags_dat$n_object <- length(unique(dat$grant_id))
+jags_dat$n_assessor <- length(unique(dat$RandomRevID))
+
+jags_dat$n <- length(dat$value)
+
+str(jags_dat)
+
+
+
+model <- jags.model(textConnection(model_string),
+                    data = jags_dat,
+                    n.chains = 4,
+                    n.adapt = 50000)
+
+
+update(model, n.iter = 10000)
+
+
+
+fit <- coda.samples(model = model,
+                    variable.names = c("overall_m",
+                                       "id_quality",
+                                       "ass_effect",
+                                       "sigma_g", "sigma_o", "sigma_ass"),
+                    n.iter = 40000,
+                    thin = 100)
+
+
+#
+### Convergence  ------------------------------------------------------------
+#
+
+traceplot(fit)
+
+# Check ESS
+
+effectiveSize(fit)
+lapply(fit, effectiveSize)
+
+m.fit <- as.matrix(fit)
+
+# Checking Autocorrelation 
+col_ns <- paste0("id_quality[",1:28,"]")
+for (i in col_ns) {
+  sim <- m.fit[,i] 
+  acf(sim, main = i)
+}
+
+
+gelman.diag(fit, autoburnin=TRUE)
+#gelman.plot(fit, autoburnin=TRUE)
+
+raftery.diag(fit)
+
+geweke.plot(fit)
+
+heidel.diag(fit)
+
+# DIC computation in rjags 
+dic.samples(model=model, n.iter=1000)
+
+
+#
+### Extracting outputs ------------------------------------------------------------
+#
+
+
+samples <- do.call("rbind", fit)
+object_qualities <- samples[,11:38]
+
+quant_25 <- rep(NA,28)
+quant_75 <- rep(NA,28)
+
+means <- colMeans(object_qualities)
+
+for (i in 1:28) {
+  quant_25[i] <- quantile(object_qualities[,i],0.25)
+  quant_75[i] <- quantile(object_qualities[,i],0.75)
+}
+
+#In one table
+overview <- rbind(means, quant_25, quant_75)
+colnames(overview) <- levels(as.factor(jags_dat$object_id))
+overview <- (overview[,order(overview[1,])])[,1:10]
+pander(overview)
+
+
+make_plot_segment(min = overview[2,], max = overview[3,], estimate = overview[1,],
+                  names = colnames(overview), model_name = "JAGS hierarchical",
+                  accepted = c(rep("Lottery",4), rep("Rejected",6)), 
+                  intercept_line = overview[1,3],ylims = c(-1.2,0))
+
+
+
+
+
+
