@@ -330,14 +330,14 @@ Upon further inspection of the data, three of the five MCI datapoints in this da
 
 ## Agreement between Scoring and Ranking Data
 
-The scoring and ranking data are positively correlated wtih a pearson correlation coefficient of 0.485. This means higher perceived qualities of scores usually signify the object also obtain between ranks. A visual representation of this correlation can be found in Figure xx.
+The scoring and ranking data are positively correlated with a Pearson correlation coefficient of 0.485. This signifies higher perceived qualities in the scoring data usually signify that the object also obtains higher quality ranks. A visual representation of this correlation can be found in Figure \ref{fig:agreement} .
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\linewidth]{figures/data/cor_rank_score}
     \caption{A plot of the agreement between scores and ranks: On the x-axis, the scores given to the objects. On the y axis, the rank given to the objects. Each datapoint represents a score-rank pair in the data.}
-    \label{fig:rank_expl}
+    \label{fig:agreement}
 \end{figure}
 
 
@@ -1559,10 +1559,22 @@ Figure \ref{fig:zscore_whole} provides an overview of the Z-scores of all object
 
 ## Code Availability
 
-## Declaration
+All code used in order to write this report, analyse data, and generate figures in this thesis is available on github under the following link:  [https://github.com/cchipmunk/MaTh-funding-rank-score](https://github.com/cchipmunk/MaTh-funding-rank-score)
+
+
+## Use of AI Declaration
+
+I hereby declare that the work carried out in this thesis was done independently, and that no part of this project, including all code, reports and presentations was written by any kind of generative artificial intelligence tool. I also declare that no artificial intelligence tools were used for any kind of proofreading or reformulating in this project. I acknowledge that work that violates the principles set out in this declaration of authenticity may have legal and disciplinary consequences.
 
 ## Session Info
 
+```{R}
+#| echo: false
+#| eval: true
+
+sessionInfo()
+
+```
 
 
 \newpage
