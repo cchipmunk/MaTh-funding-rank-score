@@ -330,7 +330,7 @@ Upon further inspection of the data, three of the five MCI datapoints in this da
 
 ## Agreement between Scoring and Ranking Data
 
-The scoring and ranking data are positively correlated with a Pearson correlation coefficient of 0.485. This signifies higher perceived qualities in the scoring data usually signify that the object also obtains higher quality ranks. A visual representation of this correlation can be found in Figure \ref{fig:agreement} .
+The scoring and ranking data are positively correlated with a Pearson correlation coefficient of 0.485. This signifies higher perceived qualities in the scoring data are associated with higher perceived quality in the ranking data. A visual representation of this correlation can be found in Figure \ref{fig:agreement} .
 
 
 \begin{figure}[H]
