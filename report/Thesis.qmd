@@ -65,20 +65,14 @@ freeze: auto
 \thispagestyle{empty}
 
 
-\LARGE\textbf{Towards Bayesian joint modelling of ranks and scores to
-reduce} \\
+\LARGE\textbf{Towards Bayesian joint modelling of ranks and scores} \\
 \vspace{0.2cm}
-\LARGE\textbf{uncertainty in the assessment of grant proposal
-quality} 
-
-\Large\textit{suggestion: Towards Bayesian joint modelling of ranks and scores} \\
-\vspace{0.2cm}
-\Large\textit{in the assessment of grant proposal quality} 
+\LARGE\textbf{in the assessment of grant proposal quality} 
 
 
 \vspace{1cm}
 \hrule
-\vspace{2cm}
+\vspace{5cm}
 
 \Large\text{Master Thesis in Biostatistics (STA495)}
 
@@ -116,13 +110,13 @@ TODO
 
 # Abstract {.unnumbered}
 
-Funding agencies rely on expert evaluations to assess the quality of research proposals submitted to a funding call. Most often, experts are asked to score proposals on an ordinal or continuous scale. Some funders instead ask experts to rank the proposals from best to worst, and few funders ask experts to both score and rank proposals. These scoring and ranking data are then statistically analysed by the funders in order to take funding decisions. 
+\textbf{Introduction:} Funding agencies rely on expert evaluations to assess the quality of research proposals submitted to a funding call. Most often, experts are asked to score proposals on an ordinal or continuous scale. Some funders instead ask experts to rank the proposals from best to worst, and few funders ask experts to both score and rank proposals. These scoring and ranking data are then analysed in order to take funding decisions. While many statistical models exist to analyse these data, there curently exists no formal comparison of these models. Moreover, while there already exist a frequentist model for analysing scoring and ranking data, a Bayesian approach to joint modelling is yet to be explored.
 
-This work formalises the concepts of ranking and scoring data in the context of grant proposal quality assessment. We review and compare six different frequentist and Bayesian methods that can be used in the analysis of scoring and/or ranking data. We apply these methods on a real-world dataset containing both scoring and ranking data collected by the American Institute for Biological sciences. We also present and compare two different methods for posterior distribution estimation in the Bayesian models: the Integrated Nested Laplace Approximation (\textsc{Inla}), and a Markov chain Monte Carlo simulation (\textsc{Mcmc}).
+\textbf{Methods:} This work formalises the concepts of ranking and scoring data in the context of grant proposal quality assessment and funding decision making. We review and compare six different frequentist and Bayesian methods that can be used for such data. We apply them on a real-world dataset containing both scoring and ranking data collected by the \textit{American Institute for Biological Sciences}. We also present and compare two different methods for posterior distribution estimation in the Bayesian models: the Integrated Nested Laplace Approximation (\textsc{Inla}), and a Markov chain Monte Carlo simulation (\textsc{Mcmc}).
 
-In the data analysis, each of the six models used provides a different ordering of the grant proposals. The choice of model thus has a direct impact on the assessment of proposal quality, and, depending on the amount of proposals to be funded, a direct impact on the funding decision. The choice of Bayesian posterior distribution estimation method did not yield any difference in the results. However, the \textsc{Inla} implementation is significantly faster to fit than the \textsc{Mcmc} simulation.
+\textbf{Results:} In the data analysis, each of the six models used provides a different ordering of the grant proposals with respect to their quality. The choice of model thus has a direct impact on the estimation of proposal quality, and subsequently can have a direct impact on the funding decision. The choice of Bayesian posterior distribution estimation method did not yield any difference in the results. However, the \textsc{Inla} implementation is considerably faster to fit  and easier to use than the \textsc{Mcmc} simulation due to it requiring fewer convergence diagnostics.
 
-We show and discuss that some methods for ranking data favour proposals that consistently obtain good ranks, while others favour proposals which polarise and have both very high or very low ranks. These findings are currently limited to the dataset analysed, and the analyses we performed need to be replicated on simulation data and other real-world data in order to provide robust recommendations. We also propose possible approaches to combine scoring and ranking data in joint models in order to combine the information from both data types. While these joint approaches have yet to be implemented, we hypothesise that they could provide more precise and fair analyses than separate models for scores and ranks. This work highlights the importance of the choice of statistical model in the assessment of grant proposal quality, and provides a solid foundation for further work in this field. 
+\textbf{Discussion:} We provide unified notation that enable these models to directly be compared with one another. Moreover, the application of these models on one dataset enables us to compare the results provided by each model individually. We show and discuss that some methods for ranking data favour proposals that consistently obtain middling ranks, while others favour proposals which polarise and obtain both very high or very low ranks. This demonstrates that the choice of model used to analyse the grant proposal assessment data has a direct impact on funding decisions and highlights the importance of making conscious and intentional choices in this context. While these findings are currently limited to the dataset analysed, further work could replicate the analyses performed here on other real-world and simulation data and provide robust model recommendations. Based on the results, we also propose possible approaches for combining scoring and ranking data in Bayesian joint models. In addition, we provide a minimal implementation of such a method using the INLA framework. Altogether, this thesis provides a first comparison of models in analysing grant proposal data, and provides the foundations necessary for further analysis of models in this context. 
 
 
 \newpage
@@ -158,7 +152,7 @@ REDO figure score vs Rank (switch left and right).
 
 ## Grant Proposal Funding
 
-When resources are limited, decisions have to be made on how to allocate them. In research, funding agencies make these decisions by accepting or rejecting grant proposals. Agencies contact panels of experts which individually review, rank or score proposals, the best of which are funded and the rest rejected [ @harman_management_1998 ]. However, there is evidence for bias in this process. For instance, funding for innovative, risky or interdisciplinary research is less likely to be awarded than for conservative and conventional proposals [@guthrie_measuring_2019]. Moreover, evaluations from individual experts are known to be unreliable, even after panel meetings, making it hard to objectively assess which proposals are worth funding [@fogelholm_panel_2012]. Despite these shortcomings, there is no existing alternative to this expert peer review system. To mitigate its downsides, statistical methods can be used to analyse the experts' evaluations in order to ensure fair decision making.
+When resources are limited, decisions have to be made on how to allocate them. In research, funding agencies make these decisions by deciding whether to accept or reject grant proposals. Agencies contact panels of experts which individually review, rank or score proposals, the best of which are funded and the rest rejected [ @harman_management_1998 ]. However, there is evidence for bias in this process. For instance, funding for innovative, risky or interdisciplinary research is less likely to be awarded than conservative and conventional research [@guthrie_measuring_2019]. Moreover, evaluations from individual experts are known to be unreliable, even after panel meetings, making it hard to objectively assess which proposals are worth funding [@fogelholm_panel_2012]. Despite these shortcomings, there is no existing alternative to this expert peer review system. To mitigate its downsides, statistical methods can be used to analyse the experts' evaluations in order to ensure fair decision making.
 
 Depending on the assessment system, the experts either make qualitative or quantitative statements about the quality of the proposals. This project will focus on statistical methods to analyse two quantitative expert evaluation systems:
 
@@ -168,12 +162,12 @@ Depending on the assessment system, the experts either make qualitative or quant
 \end{enumerate}
 
 
-To evaluate grant proposal qualities from these data, multiple statistical models, both frequentist and Bayesian, have already been developed. In this thesis, we propose a novel unified notation framework to write about these models. Using this framework, we review and reproduce six statistical methods for evaluating scoring data and ranking data. We then compare the results provided by each model and discuss their implications. Finally, we provide multiple paths that can be taken towards creating a joint model combining scoring and ranking data to provide quality estimates. We hypothesise that a joint model would enable a more precise analysis of object quality in comparison to the other models made for this purpose. This would improve the current decision-making process and ultimately allow funding agencies to allocate their resources more fairly.
+To evaluate grant proposal quality from these data, multiple statistical models, both frequentist and Bayesian, have been developed. In this thesis, we propose a unified notation framework to write about these models. Using this framework, we review and reproduce six statistical methods for evaluating scoring data and ranking data separately and jointly. We then compare the results provided by each model and discuss their implications. Finally, we provide paths that can be taken towards creating further joint models combining scoring and ranking data to provide quality estimates. We hypothesise that the comparison of models that we provide could improve the current decision-making process of funding agencies and ultimately allow them to allocate their resources more fairly.
 
 
 ## Definitions
 
-Many different notations and formulations are used in literature to refer to ranking and scoring data. For clarity, this section defines the notation that we will use in this thesis. It is inspired by Heyard et al. [-@heyard_rethinking_2022] and Xia [-@xia_learning_2019].
+Many different notations and formulations are used in the literature to refer to ranking and scoring data. For clarity, this section defines the notation that we will use in this thesis. It is inspired by Heyard et al. [-@heyard_rethinking_2022] and Xia [-@xia_learning_2019].
 
 ### Objects and Assessors
 
@@ -189,7 +183,7 @@ We define objects as the set of items that are ranked and scored by the assessor
 
 ### Scores 
 
-Scores are obtained by having assessors assign a grade to each object by estimating its quality. Grades are measured on continuous or ordinal scales of different lengths. When scoring, assessors examine each object individually and compare it to their personal representation of an ideal object; their assessment of each object is assumed to be independent from all other objects (see Figure \ref{fig-rankscore}, left). In this thesis, we work with scoring data on a continuous scale and we use the convention that \textbf{low scores represent high quality and high scores represent low quality}. \      
+Scores are obtained by having assessors assign a grade to each object by estimating its quality. Grades are measured on continuous or ordinal scales of different lengths. When scoring, assessors examine each object on an absolute scale; they assess objects individually and compare them to their personal representation of an ideal object. The assessment of each object is assumed to be independent from all other objects assessed (see Figure \ref{fig-rankscore}, left). Their assessment is said to be on an absolute scale. In this thesis, we work with continuous scoring data and we use the convention that \textbf{low scores represent high quality and high scores represent low quality}. \      
 
 ::: {.callout-note title="**Definition: Scores**" }
 
@@ -202,7 +196,7 @@ Scores are obtained by having assessors assign a grade to each object by estimat
 
 ### Rankings
 
-In contrast to scores, rankings are obtained by having each assessor directly compare all objects against each other and order them from best to worst. The objects are therefore assessed on a relative scale; the assessment of each object is directly influenced by the quality of all other objects in the objects (see Figure \ref{fig-rankscore}, right). In this thesis, we will use the convention that \textbf{the best rank is the 1st, and then, as the rank ascends, the quality of the objects decreases}. 
+In contrast to scores, rankings are obtained by having each assessor directly compare all objects against each other and order them from best to worst. The objects are therefore assessed on a comparative scale; the assessment of each object is directly influenced by the quality of all other objects in the set of objects evaluated (see Figure \ref{fig-rankscore}, right). In this thesis, we will use the convention that \textbf{the best rank is the 1st, and then, as the rank ascends, the quality of the objects decreases}. 
 
 ::: {.callout-note title="**Definitions: Rankings**" }
 
@@ -231,7 +225,7 @@ In contrast to scores, rankings are obtained by having each assessor directly co
 
 ### Object Quality and Final Ordering 
 
-The ultimate objective of our modelling will be to select the most appropriate subset of objects for funding, given the available funding amount. To obtain this subset, we will need to make a final ordering of the objects, sorting the objects from best to worst. This is either achieved, in models estimating a latent quality variable, by sorting the latent quality variable in ascending order (lower values of the latent quality variables represent higher object qualities), or, in models which directly calculate a ranking, by taking a model's predicted true underlying ranking. Once the final ordering is achieved, a funding line can be introduced. The funding line represents the highest value of the latent quality (the minimal quality standard) necessary for an object to be funded, or, in the case where only a final ordering is available, the limit rank an object needs to achieve in order to be funded.
+The ultimate objective of our modelling will be to select the most appropriate subset of objects for funding, given the available funding amount. To obtain this subset, we will need to make a final ordering of the objects, sorting the objects from best to worst. This is either achieved, in models estimating a latent quality variable, by sorting the latent quality variable in ascending order (lower values of the latent quality variables represent higher object qualities), or, in models which directly calculate a ranking, by taking a model's predicted true underlying ranking as the final ordering. Once the final ordering is calculated, a funding line can be introduced. The funding line represents the highest value of the latent quality (the minimal quality standard) necessary for an object to be funded, or, in the case where only a final ordering is available, the limit rank an object needs to achieve in order to be funded.
 
 
 ::: {.callout-note title="**Definitions: Quality and Final Ordering**" }
@@ -245,21 +239,21 @@ The ultimate objective of our modelling will be to select the most appropriate s
 
 ## Modelling Approaches to Scoring Data and Ranking Data
 
-Models for scoring data are very abundant in literature. In general, it is assumed that the scores given to objects follow a given distribution from which parameters can be inferred. By interpreting these parameters, statements can be made about the scoring data (for example, regarding the spread of the scores or the expected values of the scores for specific objects). As ranking data are in a special format, they require extra consideration when being analysed. Consequently, many different formulations and approaches exist to model them. In this section, we will discuss notions of how ranking data can be thought of, described and modelled.
+Models for scoring data are very abundant in the literature. In general, it is assumed that the scores given to objects follow a given distribution from which parameters can be inferred. By interpreting these parameters, statements can be made about the scoring data (for example, regarding the spread of the scores or the expected values of the scores for specific objects). As ranking data are in a special format, they require extra consideration when being analysed. Consequently, many different formulations and approaches exist to model them. In this section, we will discuss notions of how ranking data in particular can be thought of, described and modelled.
 
 ### Pairwise Comparisons and Ranking
 
-Ranking data can be thought of as a series of pairwise comparisons. This approach considers that the assessors simply compare many pairs of objects and generate a ranking from these comparisons [@marden_analyzing_2014]. The ranking data are then modelled through a series of parameters representing the probability of winning these pairwise comparisons. This description of ranking data is used in models such as the Bradley-Terry model [@bradley_rank_1952] and the Plackett-Luce model [@plackett_analysis_1975]. This description of ranks comes at a cost as the number of parameters increases rapidly for larger ranking models. 
+Ranking data can be thought of as a series of pairwise comparisons. This approach considers that the assessors simply compare many pairs of objects and generate a ranking from these comparisons [@marden_analyzing_2014]. The ranking data are then modelled through a series of parameters representing the probability of winning these pairwise comparisons. This description of ranking data is used in models such as the Bradley-Terry model [@bradley_rank_1952] and the Plackett-Luce model [@plackett_analysis_1975]. This description of ranks comes at a cost as the number of parameters increases rapidly for larger set of objects to be ranked. 
 
 
 ### Distance-Based Ranking
 
-In distance-based ranking, we assume that the data have a true underlying ranking, and that the assessors are imperfect judges who attempt to reproduce this ranking [@fligner_distance_1986]. The true ranking is perceived as a ranking order $R^* \ \epsilon \ \mathcal{L}(\mathcal{O})$, and the further the observed ranking from this true ranking, the less likely the ranking is to be present in the data. There are many possible parametrisations of this distance. Using a distance-based model instead of a pairwise comparison model drastically reduces the amount of parameters to estimate when modelling.
+In distance-based ranking, we assume that the data have a true underlying ranking, and that the assessors are imperfect judges who attempt to reproduce this ranking [@fligner_distance_1986]. The true ranking is perceived as a ranking order $R^* \ \epsilon \ \mathcal{L}(\mathcal{O})$, and the further the observed ranking is from this true ranking, the less likely the ranking is to be present in the data. There are many possible parametrisations of the distance. Using a distance-based model instead of a pairwise comparison model drastically reduces the amount of parameters to estimate when modelling.
 
 
 ### Thurstonian Ranking {#sec-tuhrst}
 
-Thurstonian ranking is another way to model ranking data. As in distance-based ranking, we assume that the assessors are imperfect judges. However, in opposition to distance-based ranking, the ranking data are not assumed to be generated based on a true underlying linear order. Instead, we assume the ranking data to be generated by a series of latent random variables representing each object's quality [@thurstone_law_1927]. According to Thurstonian ranking, each assessor observes a realisation of all the random variables and ranks them from highest to lowest based on their value (see Figure \ref{fig-thurst}).
+Thurstonian ranking is another way to model ranking data. As in distance-based ranking, we assume that the assessors are imperfect judges. However, in opposition to distance-based ranking, the ranking data are not assumed to be generated based on a true underlying linear order. Instead, we assume the ranking data to be generated by a series of latent random variables representing each object's quality [@thurstone_law_1927]. According to Thurstonian ranking, each assessor observes a realisation of the latent random variables of all objects and ranks them from highest to lowest based on these observed values (see Figure \ref{fig-thurst}).
  
 \begin{figure}[H]
     \centering
@@ -278,7 +272,7 @@ Thurstonian ranking is another way to model ranking data. As in distance-based r
 
 # Data {#sec-data}
 
-To compare and reproduce models, we will fit them on a dataset made available in Gallo et al. [-@gallo_new_2023]. The data were collected in the context of a real-world call for proposals by the American Institute of Biological Science (AIBS) in 2020. This dataset contains both scoring data and partial ranking data given to 28 objects (grant proposals) by 10 assessors (experts). The partial ranking is provided for the six best objects according to each assessor and the objects are scored on a scale from 1 (best) to 5 (worst). The funding was awarded to the top 3 objects. A summary of the main properties of the data can be found in Table \ref{tab-datov}.
+To compare and reproduce models, we will fit them on a dataset made available in the supplementary material of Gallo et al. [-@gallo_new_2023]. The data were collected in the context of a real-world call for proposals by the American Institute of Biological Science (AIBS) in 2020. This dataset contains both scoring data and partial ranking data given to 28 objects (grant proposals) by 10 assessors (experts). The partial ranking is provided for the six best objects according to each assessor and the objects are scored on a scale from 1 (best) to 5 (worst). The funding was awarded to the best 3 objects. A summary of the main properties of the data can be found in Table \ref{tab-datov}.
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c||c|c|}
@@ -297,12 +291,13 @@ To compare and reproduce models, we will fit them on a dataset made available in
     \caption{Overview of the main characteristics of the dataset from Gallo et al. (2022).}
     \label{tab-datov}
 \end{table}
-The data are unfortunately incomplete. In the scoring data there are 21 missing observations out of the 280 observations. Five of these observations are missing due to conflicts of interest (MCI) between the assessors and the object, and 16 of them are assumed to be missing completely at random (MCAR). In the ranking data, 11 observations are missing, five MCI and six MCAR. Specific considerations taken to work around the missingness in the scoring data and ranking data are discussed in their respective sections below. 
+The data are unfortunately incomplete. In the scoring data there are 21 missing observations out of the 280 possible assessor-object scoring observations. Five of these observations are missing due to conflicts of interest (MCI) between the assessors and the object, and 16 of them are assumed to be missing completely at random (MCAR). In the ranking data, 11 observations are missing, five MCI and six MCAR. Specific considerations taken to work around this missingness are discussed in the scoring and ranking data sections below. 
 
 
 ## Scoring Data
+?? Explain ICC: as we are assessing the agreement between xx with xx we use ICC of this type
 
-An overview of the scoring data can be found in Figure \ref{fig:expl}. The inter-assessor reliability calculated using a two-way, mixed effect, fixed rater ICC is 0.91 (95% CI from 0.87 to 0.96), which signifies that the grades given by the assessors have a good to excellent agreement [@koo_guideline_2016]. In the exploratory analysis, we found a significant digit preference for the score 3, and no score worse than (higher than) 4 was given to any of the objects being evaluated. Nevertheless, this digit preference and the lack of very high scores will not affect our analysis, as none of the top contenders for the grant allocation have scores higher than $2.5$.
+An overview of the scoring data can be found in Figure \ref{fig:expl}. The inter-assessor reliability calculated using a two-way, mixed effect, fixed rater ICC is 0.91 (95% CI from 0.87 to 0.96), which signifies that the grades given by the assessors have a good to excellent agreement [@koo_guideline_2016]. In the exploratory analysis, we found a significant digit preference for the score 3, and no score worse than (i.e. higher than) 4 was given to any of the objects being evaluated. Nevertheless, this digit preference and the lack of high scores will not affect our analysis.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figures/data/scores_figures.png}
@@ -311,18 +306,18 @@ An overview of the scoring data can be found in Figure \ref{fig:expl}. The inter
 \end{figure}
 
 
-There are 21 missing data points in the scoring data. This represents $7.5\ \%$ of the data, with no single object having more than three missing scores. The MCAR data, despite increasing the variability in object quality estimation, do not create any systematic bias [@dey_consequences_2026]. The methods we use on scoring data in this thesis have no problems handling missing values and there is therefore little interest in imputating MCAR datapoints. On the other hand, the MCI data are intentionally not collected from the assessor because they are known to be biased. Accordingly, imputating these values is also undesirable. We can therefore analyse the scoring data without imputating nor modifying the scoring data.
+There are 21 missing data points in the scoring data. This represents $7.5\ \%$ of the data, with no single object having more than three missing scores. The MCAR data, despite increasing the variability in object quality estimation, do not create any systematic bias [@dey_consequences_2026]. The methods we use on scoring data in this thesis have no problems handling missing values and there is therefore little interest in imputating MCAR datapoints. On the other hand, the MCI data are intentionally not collected from the assessor because they are known to be biased. Accordingly, imputating these values is also undesirable. We therefore proceed in our scoring models with complete case analyses.
 
 
 
 ## Ranking Data
 
-An overview of the ranking data can be found in Figure \ref{fig:rank_expl}. Each assessor reported their prefered top 6 objects. Thus, we obtain information about the ranking on seven levels: ranks one through six, and a rank greater or equal to seven. Assessors were not allowed to consider ties in the positions one to six. The inter-assessor reliability calculated using a two-way, mixed effect, fixed rater ICC is 0.55 (95% CI from 0.33 to 0.8), which signifies that the grades given by the assessors have a moderate level of agreement [@koo_guideline_2016]. 
+An overview of the ranking data can be found in Figure \ref{fig:rank_expl}. Each assessor reported their prefered best 6 objects. Thus, we obtain information about the ranking on seven levels: ranks one through six, and a rank greater or equal to seven. Assessors were not allowed to consider ties in the positions one to six. The inter-assessor reliability calculated using a two-way, mixed effect, fixed rater ICC is 0.55 (95% CI from 0.33 to 0.8), which signifies that the grades given by the assessors have a moderate level of agreement [@koo_guideline_2016]. 
 
 
-There are 11 missing data points in the ranking data, five MCI, and six MCAR, which represent $18.3\%$ of the ranking data. The MCAR data are due to an assessor ignoring the ranking task. We remove them from the dataset as they do not provide any information about the object qualities. However, due to the nature of the models we are using, the MCI data are problematic. The models assume that when an object has a missing value, it did not make it into the top six of an assessor. Reformulated, a missing value given by a specific assessor represents an object quality worse than the 6th ranked object according to them. However, in the case of MCI data, the missing values do not provide any information about the quality of the object. Therefore, there is a need for data imputation. 
+There are 11 missing data points in the ranking data, five MCI, and six MCAR, which represent $18.3\%$ of the ranking data. The MCAR data are due to an assessor ignoring the ranking task. We remove them from the dataset as they do not provide any information about the object qualities. However, due to the nature of the models we are using, the MCI data are problematic. The models assume that when an object has a missing value, it did not make it into the best six of an assessor. Reformulated, a missing value given by a specific assessor represents an object quality worse than the 6th ranked object according to them. However, in the case of MCI data, the missing values do not provide any information about the quality of the object. Therefore, there is a need for data imputation. 
 
-Upon further inspection of the data, three of the five MCI datapoints in this dataset represent objects that were ranked in position seven or greater by all assessors. Moreover, the two last MCI datapoints, were each only included in one of the nine assessor's top six and given the sixth rank. Given this information, we consider that the MCI datapoints represent object which would have been of worse quality than the assessors top-six's, which removes the need for imputation. This can only be assumed due to the nature of this dataset, and would have to be done differently on other datasets.  
+Upon further inspection of the data, three of the five MCI datapoints in this dataset represent objects that were ranked in position seven or greater by all assessors. Moreover, the two last MCI datapoints, were each only included in one of the nine assessor's best six and given the sixth rank. Given this information, we consider that the MCI datapoints represent object which would have been of worse quality than the assessors best six's, which removes the need for imputation. This can only be assumed due to the nature of this dataset, and would have to be done differently on other datasets.  
 
 
 <!-- (((The inter-assessor reliability was calculated using Cohen's Kappa on the ranks binned into 2 categories: top-three objects, and objects ranked higher than third place [@cohen_coefficient_1960]. Only objects that appear at minimum once in the top-six of an assessor were considered in the agreement calculation in order to not inflate the Kappa artificially [@cohen_coefficient_1960]. Using this analysis, we obtain a Kappa of $k = 0.478$ which represents a moderate agreement between assessors.))) -->
@@ -335,6 +330,9 @@ Upon further inspection of the data, three of the five MCI datapoints in this da
 \end{figure}
 
 ## Agreement between Scoring and Ranking Data
+
+?? Do median score and median rank (!)
+?? Add : All object in best 6 have grades between 1 and 2 
 
 The scoring and ranking data are positively correlated with a Pearson correlation coefficient of 0.485. This signifies higher perceived qualities in the scoring data are associated with higher perceived quality in the ranking data. A visual representation of this correlation can be found in Figure \ref{fig:agreement} .
 
@@ -350,13 +348,13 @@ The scoring and ranking data are positively correlated with a Pearson correlatio
 
 
 
-# Model Fitting
+# Model Descripion & Examples
 
 \label{methods}
 
 <!-- The six first models were taken from literature while the last model we provide is new. In this last model, we attempt modelling scoring and ranking data together using a Bayesian hierarchical model -->
 
-In this section, we will go through a total of six methods that can be used to generate a final ordering from the data described in @sec-data. Two of these methods are focused on analysing scoring data, three of them on ranking data and one of them jointly models scoring and ranking data. For each method, we first provide an overview of its inner workings, and then provide the results of a fit on the data. Due to the diversity of models used, we also obtain diverse types of results. In four models we obtain the estimated latent quality $\hat{\theta^k_i}$ of each object, while in the two last models we obtain the final ordering $\hat{\mathcal{F}_{k}}(\mathcal{O})$ of all the objects. Each model was fitted on the entirety of the dataset. However, for readability, we only provide the results for the ten best objects in each final ordering. An overview of the methods analysed and their main characteristics can be found in Table \ref{tab-overview}.
+In this section, we will present a total of six methods that can be used to generate a final ordering from the data described in @sec-data. Two of these methods are focused on analysing scoring data, three of them use only ranking data and one jointly models scoring and ranking data. We introduce each method seperately, and show the results each method applied to the data as examples. Due to the diversity of models used, we also obtain diverse types of results. In four models we obtain the estimated latent quality $\hat{\theta^k_i}$ of each object, while in two models we obtain the final ordering $\hat{\mathcal{F}_{k}}(\mathcal{O})$ of all the objects and respectively a rank $\hat{r}^k_i$ for each object. Each model was fitted on the entirety of the dataset. However, for readability, we only provide the results for the ten best objects in each final ordering. An overview of the methods analysed and their main characteristics can be found in Table \ref{tab-overview}.
 
 
 \begin{table}[H]
@@ -364,7 +362,7 @@ In this section, we will go through a total of six methods that can be used to g
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|c|c|c|c|c|c|c|}
            \hline
-          & \textbf{Scores} & \textbf{Ranks} &  \textbf{Frequentist} & \textbf{Bayesian} & $\hat{\theta_i^k}$ & $\hat{\mathcal{F}_{k}}(\mathcal{O})$\\
+          & \textbf{Scores} & \textbf{Ranks} &  \textbf{Frequentist} & \textbf{Bayesian} & $\hat{\theta_i^k}$ & $\hat{r}_{i}^k$\\
         \hline
          Mean scores & $\checkmark$ &  & $\checkmark$ & & $\checkmark$ & \\
          Hierarchical model for scores & $\checkmark$ &  & & $\checkmark$ & $\checkmark$ & \\
@@ -386,7 +384,7 @@ In this section, we will go through a total of six methods that can be used to g
 
 ### Mean Scores {#sec-mean}
 
-A first and straightforward approach proposed by Zehlike et al. [-@zehlike_fairness_2022] to assess the quality of each object is to use the mean of all the scores $y_{ij}$ obtained by an object $o_i$ as an approximation of the object's quality. In this case, the latent quality of an object $\theta_i^{\ mean}$ is estimated as follows:
+A first and straightforward approach proposed by Zehlike et al. [-@zehlike_fairness_2022] to analyse the quality of each object is to use the mean of all the scores $y_{ij}$ obtained by an object $o_i$ as an approximation of the object's quality. In this case, the latent quality of an object $\theta_i^{\ mean}$ is estimated as follows:
 
 \begin{gather*}
 \bar{y}_i = \frac{\sum_{j=1}^m y_{ij}}{m}, \quad i = 1, ..., n \\
@@ -394,9 +392,13 @@ A first and straightforward approach proposed by Zehlike et al. [-@zehlike_fairn
 \hat{\theta}_i^{\ mean} = \bar{y}_i - \bar{y} 
 \end{gather*}
 
-Note that, by definition, high quality objects will have negative values of latent quality $\hat{\theta}_i^{\ mean}$. This model relies on many strong assumptions. First, it assumes that each assessor has the exact same scoring habits, and is well calibrated with themselves and the rest of the group (for example, that no assessor is stricter or more lenient than their peers). Second, it also assumes that each object is evaluated completely independently from all other objects. Moreover, unless the number of assessors is extremely large, it cannot be used to provide any reasonable uncertainty estimates in its results [@kaplan_sample_2008]. In this thesis, we fit this model using a homemade \texttt{R} script [@R_core].
+Note that, by convention, high quality objects will have negative values of latent quality $\hat{\theta}_i^{\ mean}$. This model relies on many strong assumptions. First, it assumes that each assessor has the exact same scoring habits, and is well calibrated with themselves and the rest of the group (for example, that no assessor is stricter or more lenient than their peers). Second, it also assumes that each object is evaluated completely independently from all other objects. Moreover, unless the number of assessors is extremely large, it cannot be used to provide any reasonable uncertainty estimates in its results [@kaplan_sample_2008]. In this thesis, we fit this model using an \texttt{R} script [@R_core].
 
-The mean scores model provides an estimate of the latent quality $\hat\theta_{i}^{\ mean}$ of the objects from the scoring data. Figure \ref{fig:mm} shows the latent quality estimates for the ten best objects according to this model. The mean score model would accept objects x17, x19, and x25. Object x19 and x25 are tied for second place, and the difference in latent quality between the tied second place and the fourth place object is very low. The exact latent quality values for the ten best objects accoding to this model are provided in Table \ref{tab:mm}.
+?? Kaplan probably either deleted or sent to discussion as is true for all models using scores.
+
+The mean scores model provides an estimate of the latent quality $\hat\theta_{i}^{\ mean}$ of the objects from the scoring data. Figure \ref{fig:mm} shows the latent quality estimates for the ten best objects according to this model. The mean score model would accept objects x17, x19, and x25. Object x19 and x25 are tied for second place, and the difference in latent quality between the tied second place and the fourth place object is very low. The latent quality estimates for the ten best objects according to this model are provided in Table \ref{tab:mm}.
+
+?? TODO: Fix figure, add 0.4 in y axis so that we can compare to figure 7
 
 \begin{figure}[H]
     \centering
@@ -432,6 +434,9 @@ The mean scores model provides an estimate of the latent quality $\hat\theta_{i}
 
 ### Hierarchical Model for Scores
 
+?? Rewrite, we start with the model from Rachel -> modify -> and try to match INLA
+?? Plot priors so we can show that both are same
+
 To alleviate the assessor calibration assumptions discussed in @sec-mean, Heyard et al. [-@heyard_rethinking_2022] proposed a hierarchical model for scores that includes parameters to model the different scoring behaviors of the assessors. This model still offers a latent object quality variable $\theta_i^{\ hier}$ based on the mean of the scores obtained by each object. We defined a slightly modified version of this model as follows:
 
 \begin{gather*}
@@ -445,10 +450,10 @@ y_{ij} | \theta_i^{\ hier}, \lambda_{ij} \sim N(\mu + \theta_i^{\ hier} + \lambd
 With $\mu$ taking the value of the mean score of all objects, and $\lambda_{j}$ being the assessor-specific effect representing the differences in scoring habits and strictness. Given the scores are grades given between one and five, we fix gamma priors for the standard deviations $\tau$ with distributions which lie within plausible values for these parameters, with modes of $1$, and standard deviations of $2/3$. Using this model, we obtain and extract the posterior distribution for the latent quality of each object $\theta_i^{\ hier}$, which we use to provide credible intervals of $\theta_i^{\ hier}$. This model makes use of the funding line, Heyard et al. [-@heyard_rethinking_2022] propose that all proposals that have a 50\% credible interval of $\theta_i^{\ hier}$ crossing the funding line should be considered in a lottery instead of being directly accepted or rejected. 
 
 
-This model can be fitted using the \texttt{ERforResearch} package [@heyard_2026]. This implementation uses the \texttt{rjags}  [@rjags] framework in order to generate a \textsc{Mcmc} sample of the posterior distributions of $\theta_i^{\ hier}$. To fit the model, we will use both a reimplementation of this model in \texttt{rjags}, and a new implementation of this model using the Integrated Nested Laplace Approximation \textsc{Inla} framework using the \texttt{inla} [@rue_approximate_2009]. More information on both these methods can be found in Annex \ref{mcmc} and Annex \ref{inla}. The \texttt{rjags} model was called with 10000 iterations of adaptive sampling, 10000 iteration of burn-in and 80000 iterations of sampling in combination with a thinning of 20. Convergence diagnostics of the \texttt{rjags} model are available in Annex \ref{coda-hier} and the model calls are available in Annex \ref{mod_calls}.
+This model can be fitted using the \texttt{ERforResearch} package [@heyard_2026]. This implementation uses the \texttt{rjags}  [@rjags] framework in order to generate a \textsc{Mcmc} sample of the posterior distributions of $\theta_i^{\ hier}$. To fit the model, we will use both a reimplementation of this model in \texttt{rjags}, and a new implementation of this model using the Integrated Nested Laplace Approximation \textsc{Inla} framework using the \texttt{inla} package [@rue_approximate_2009]. More information on both these methods can be found in Annex \ref{mcmc} and Annex \ref{inla}. The \texttt{rjags} model was called with 10000 iterations of adaptive sampling, 10000 iteration of burn-in and 80000 iterations of sampling in combination with a thinning of 20. Convergence diagnostics of the \texttt{rjags} model are available in Annex \ref{coda-hier} and the model calls are available in Annex \ref{mod_calls}.
 
 
-Both fitting methods provide very similar posterior distribution for $\theta_i^{hier}$.  Figure \ref{fig:jags_inla_hier} shows the latent quality estimates for the ten best objects according to both the \texttt{rjags} fit and the \texttt{inla} fit. Both fits would suggest a lottery to allocate the funding to three of the four best objects: x17, x25, x19 and x21. The exact latent quality values for the ten best objects according to both these fits are provided in Table \ref{tab:hier_m}. Both model fits provide the same output; the largest discrepancy between the two fitting procedure is of a magnitude of $0.02$. However, the \texttt{inla} model does not require any convergence diagnostic and is thus faster to fit.  
+Both fitting methods provide very similar posterior distribution for $\theta_i^{hier}$.  Figure \ref{fig:jags_inla_hier} shows the latent quality estimates for the ten best objects according to both the \texttt{rjags} fit and the \texttt{inla} fit. Both fits would suggest a lottery to allocate the funding to three of the four best objects: x17, x25, x19 and x21. The latent quality estimates for the ten best objects according to both these fits are provided in Table \ref{tab:hier_m}. Both model fits provide the same output; the largest discrepancy between the two fitting procedure is of a magnitude of $0.02$. However, the \texttt{inla} model does not require any convergence diagnostic and is thus faster to fit.  
 
 <!-- #### Hierarchical model for scores - results -->
 
@@ -535,7 +540,7 @@ Both fitting methods provide very similar posterior distribution for $\theta_i^{
         \hline
     \end{tabular}
     \renewcommand{\baselinestretch}{1}
-    \caption{Underlying quality estimates and $50\%$ credible intervals (CI) of the 10 best objects according to the hierarchical model for scores fitted with \texttt{rjags} and \texttt{inla}. Objects are sorted from best to worst according to the hierarchical model for scores.}
+    \caption{Underlying quality estimates (posterior means ?? or median check) and $50\%$ credible intervals (CI) of the 10 best objects according to the hierarchical model for scores fitted with \texttt{rjags} and \texttt{inla}. Objects are sorted from best to worst according to the hierarchical model for scores.}
     \label{tab:hier_m}
 \end{table}
 
@@ -586,19 +591,19 @@ Both fitting methods provide very similar posterior distribution for $\theta_i^{
 
 ### Plackett-Luce
 
-The Plackett-Luce model is a model based on pairwise comparison. It assumes that each object $o_i \in \mathcal{O}$ has a fixed probability of coming in first place when compared with the other objects in the set $\mathcal{O'} = \mathcal{O} \setminus \{o_i\}$ [@plackett_analysis_1975]. This probability is estimated by assigning a weight $w_i \in \mathcal{W}$ for each object $o_i$. The higher the value of the weight, the more preferred the object. The relationship between the probability of a specific object $o_{l}$ coming in first place and the weights $\mathcal{W}$ is defined as follows:
+The Plackett-Luce model is a model based on pairwise comparison. It assumes that each object $o_i \in \mathcal{O}$ has a fixed probability of coming in first place when compared with the other objects in the set $\mathcal{O'} = \mathcal{O} \setminus \{o_i\}$ [@plackett_analysis_1975]. This probability is estimated by assigning a weight $w_i \in \mathcal{W}$ for each object $o_i$. The higher the value of the weight, the more preferred the object. The relationship between the probability of a specific object $o_{l} \in \mathcal{O}$ coming in first place ($r_l = 1$) and the weights $\mathcal{W}$ is defined as follows:
 
 \begin{gather} 
 \mathbb{P}[r_{l} = 1| \mathcal{W}] = \frac{w_{l}}{\sum_{i = 1}^{n}w_i} \label{decision-luce}
 \end{gather}
 
-The Plackett-Luce model considers each ranking order $R_j$ as a sequence of decisions made using Equation (\ref{decision-luce}). A formulation of the likelihood of this model can be found in Annex \ref{lik-Luce}. In this method, the weights $\mathcal{W}$ are the quality estimates of the objects. In order to follow the convention that lower latent quality estimates represent higher scores, we will transform them as follows:
+The Plackett-Luce model considers each ranking order $R_j$ as a sequence of decisions made using Equation (\ref{decision-luce}). A formulation of the likelihood of this model can be found in Annex \ref{lik-Luce}. In this method, the weights $\mathcal{W}$ can be interpreted as the quality estimates of the objects. In order to follow the convention that lower latent quality estimates represent higher scores, we will transform them as follows:
 \begin{gather*}
 \theta_i^{\ pl-lu} = (1 - w_i)
 \end{gather*}
-We then estimate the final ordering of the objects by sorting the weights $\mathcal{W}$ in ascending order. To estimate the weight parameters, we  fit a Plackett-Luce model using an \texttt{R} implementation by Turner et al. [@turner_modelling_2020]. 
+We then estimate the final ordering of the objects by sorting the weights $\mathcal{W}$ in ascending order. To estimate the weight parameters, we  fit a Plackett-Luce model using an \texttt{R} implementation by Turner et al. [-@turner_modelling_2020]. 
 
-The Plackett-Luce model provides an estimate of the latent quality $\hat\theta_{i}^{\ pl-luce}$ of each object from the ranking data. Figure \ref{fig:pl} shows the latent quality estimates for the ten best objects according to this model. This model would accept the three objects; x25, x19, and x21. The difference in latent quality between the third place and the fourth place object is very low. The exact latent quality values are provided in Table \ref{tab:pl}.
+The Plackett-Luce model provides an estimate of the latent quality $\hat\theta_{i}^{\ pl-luce}$ of each object from the ranking data. Figure \ref{fig:pl} shows the latent quality estimates for the ten best objects according to this model. This model would accept the three objects; x25, x19, and x21. The difference in latent quality between the third place and the fourth place object is very low. The latent quality estimates are provided in Table \ref{tab:pl}.
 
 \begin{figure}[H]
     \centering
@@ -636,12 +641,11 @@ The Mallows model is a distance-based ranking method which considers a true unde
 \begin{gather*}
 \mathbb{P}[R_j| R^* , \eta] = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \\
 d(R_j, R^* ) = \sum_{i,l = 1}^n \mathbb{1}\{o_i \ \ {\succ}_{R_j}  \ \ o_l \quad \text{and} \quad o_l \ \ {\succ}_{R^*}  \ \ o_i\} \\
-\psi_{\mathcal{O}}(\eta) = \sum_{\mathcal{L}(\mathcal{O})}  \exp(-\eta \ \ d(R_j, R^*))
+\psi_{\mathcal{O}}(\eta) = \sum_{\mathcal{L}(\mathcal{O})}  \exp(-\eta \ \ d(R_j, R^*)),
 \end{gather*}
+where $\psi_{\mathcal{O}}(\eta)$ is a normalizing constant, and $d(\cdot,\  \cdot)$ is the Kendall distance (minimum sum of adjacent swaps) between two linear orders. The notation $o_i \ \ {\succ}_{R_j}  \ \ o_l$ indicates that the object $o_i$ is ranked higher than $o_l$ in the observed ranking order $R_j$. Conversely, $o_l \ \ {\succ}_{R^*}  \ \ o_i$ indicates that $o_l$ is ranked higher than $o_i$ in the true ranking order $R^*$. The $\eta$ parameter\footnote{In literature $\eta$ is often denoted as $\theta$. In this thesis, we use $\eta$, as $\theta$ is used to denote object quality.} represents a measure of similarity between the objects $\mathcal{O}$. A large $\eta$ implies that the distribution of the ranking data $R$ is closely concentrated around the true underlying rank $R^*$, while an $\eta$ of 0 implies that the distribution of the ranking data $R$ is uniform across the linear orders $\mathcal{L}(\mathcal{O})$. Using this method, the final ordering of the objects $\mathcal{F}_{mlw}(\mathcal{O})$ is $\hat{R^*}$. To fit the Mallows model, we will use an \texttt{R} implementation by Sorensen et al. [-@mallows_2020].
 
-where $\psi_{\mathcal{O}}(\eta)$ is a normalizing constant, and $d(\cdot,\  \cdot)$ is the Kendall distance (minimum sum of adjacent swaps) between two linear orders. The notation $o_i \ \ {\succ}_{R_j}  \ \ o_l$ indicates that the object $o_i$ is ranked higher than $o_l$ in the true ranking order $R_j$. Conversely, $o_l \ \ {\succ}_{R^*}  \ \ o_i$ indicates that $o_l$ is ranked higher than $o_i$ in the true ranking order $R^*$. The $\eta$ parameter\footnote{In literature $\eta$ is often denoted as $\theta$. In this thesis, we use $\eta$, as $\theta$ is used to denote object quality.} represents a measure of similarity between the objects $\mathcal{O}$. A large $\eta$ implies that the distribution of the ranking data $R$ is closely concentrated around the true underlying rank $R^*$, while an $\eta$ of 0 implies that the distribution of the ranking data $R$ is uniform across the linear orders $\mathcal{L}(\mathcal{O})$. Using this method, the final ordering of the objects $\mathcal{F}_{mlw}(\mathcal{O})$ is $\hat{R^*}$. To fit the Mallows model, we will use an \texttt{R} implementation by Sorensen et al. [-@mallows_2020].
-
-The Mallows model provides an estimate of the true underlying ranking $\hat{R}^{*\ mlw}$ of the objects from the ranking data. Figure \ref{fig:Mallows} shows the rank estimates for the ten best objects according to this model. This model would accept the objects x17, x25, and x19. The exact ranking values are provided in Table \ref{tab:Mallows}.
+The Mallows model provides an estimate of the true underlying ranking $\hat{R}^{*\ mlw}$ of the objects from the ranking data. Figure \ref{fig:Mallows} shows the rank estimates for the ten best objects according to this model. This model would accept the objects x17, x25, and x19. The ranking estimates are provided in Table \ref{tab:Mallows}.
 
 \renewcommand{\baselinestretch}{1}
 
@@ -679,17 +683,17 @@ The Mallows model provides an estimate of the true underlying ranking $\hat{R}^{
 
 ### Thurstonian Model
 
-In Thurstonian modelling, the ranking order is assumed to be determined by drawing from latent random variables $z_{i}$ (as discussed in @sec-tuhrst). The ranking orders $R_j$ given by the assessors $j = \{1, ..., m\}$ are assumed to be determined by sorting a set of of $i = \{1, ..., n\}$ drawings of a random variable $z_{i}$ in descending order. In this thesis, we use the fifth case of the model as described in [@thurstone_law_1927] to define the following:
+In Thurstonian modelling, the ranking order is assumed to be determined by drawing from latent random variables $z_{i}$ (as discussed in @sec-tuhrst). The ranking orders $R_j$ given by the assessors $j = \{1, ..., m\}$ are assumed to be determined by sorting a set of of $i = \{1, ..., n\}$ drawings of $n$ random variable $z_{i}$ in descending order. In this thesis, we use a version of the model as described in a paper by Thurstone [-@thurstone_law_1927] known as a case five model to define the following:
 \begin{gather*}
 z_{i} \sim N(\mu_i ,\ \sigma^2)
 \end{gather*}
-where $\mu_i$ is a latent quality variable for object $o_i \in \mathcal{O}$ and $\sigma$ is the noise in the perception of this quality. The noise $\sigma^2$ is assumed to be the same in the perception of all object. As this model is underdefined, we add the following constraints: $\sigma^2 = 1$ and $\mu_n = 0$. A  formulation of the likelihood of the parameter $\mu$ using this constraint is available in [@maydeu-olivares_thurstones_2004]. We then define the latent quality variable as follows:
+where $\mu_i$ is a latent quality variable for object $o_i \in \mathcal{O}$ and $\sigma$ is the noise in the perception of this quality. We add the following constraints: $\sigma^2 = 1$ in order to simplify the estimation of the {\mu_i}, and $\mu_n = 0$, in order to make the model identifiable. A  formulation of the likelihood of the parameter $\mu$ using this constraint is available in Maydeu-Oliveras [-@maydeu-olivares_thurstones_2004]. We then define the latent quality variable as follows:
 \begin{gather*}
 \theta_{i}^{\ thurst} = -\mu
 \end{gather*}
 The final ordering of the objects by sorting the latent quality estimate $\theta_{i}^{\ thurst}$ in ascending order. In this thesis, we fit the Thurstonian model using an \texttt{R} implementation by Revelle [-@r_psych]. 
 
-The Thurstonian model provides an estimate of the latent quality $\hat\theta_{i}^{\ thurst}$ of the objects from he ranking data. Figure \ref{fig:thurst} shows the rank estimates for the ten best objects according to this model. This model would accept the objects x25, x19, and x17. The exact latent quality estimates $\hat\theta_{i}^{\ thurst}$ are provided in Table \ref{tab:thurst}.
+The Thurstonian model provides an estimate of the latent quality $\hat\theta_{i}^{\ thurst}$ of the objects from he ranking data. Figure \ref{fig:thurst} shows the rank estimates for the ten best objects according to this model. This model would accept the objects x25, x19, and x17. The latent quality estimates $\hat\theta_{i}^{\ thurst}$ are provided in Table \ref{tab:thurst}.
 
 
 \begin{figure}[H]
@@ -747,9 +751,11 @@ Combining the Binomial model with the Mallows model provides the following proba
 \pi = [\pi_1, ..., \pi_n], \quad R^* = \text{Order}(\pi), \quad \eta > 0
 \end{gather*}
 
-This model incorporates $n + 1$ joint observations per assessor, with $n$ scoring observations and $1$ ranking observation. It jointly models the ranking and the scoring data by assuming the underlying ranking order $R^*$ is dependent on the ordering of $\pi$. Using this method we assume the final ordering of the objects is $\hat{R}^{*\ mbin}$. In this thesis, we fit the Mallows-Binomial model using an \texttt{R} implementation by Pearce [-@rankrate]. This implementation also includes a bootstrapped uncertainty estimate, which we provide in the results below.
+This model incorporates up to $n + 1$ joint observations per assessor, with up to $n$ scoring observations and $1$ ranking observation. It jointly models the ranking and the scoring data by assuming the underlying ranking order $R^*$ is dependent on the ordering of $\pi$. Using this method we assume the final ordering of the objects is $\hat{R}^{*\ mbin}$. In this thesis, we fit the Mallows-Binomial model using an \texttt{R} implementation by Pearce [-@rankrate]. This implementation also includes a bootstrapped uncertainty estimate, which we provide in the results below.
 
-The Mallows-Binomial model provides an estimate of the true underlying ranking $\hat{R}^{*\ mbin}$ from both the scoring data and the ranking data.  This model would accept the objects x17, x25 and x19. The exact ranking values are provided in Table \ref{tab:mbin}.
+?? add a description of how bootstrap works in this estimation
+
+The Mallows-Binomial model provides an estimate of the true underlying ranking $\hat{R}^{*\ mbin}$ from both the scoring data and the ranking data.  This model would accept the objects x17, x25 and x19. The ranking estimates are provided in Table \ref{tab:mbin}.
 
 
 \renewcommand{\baselinestretch}{1}
@@ -782,7 +788,7 @@ The Mallows-Binomial model provides an estimate of the true underlying ranking $
         \hline
     \end{tabular}}
     \renewcommand{\baselinestretch}{1}
-    \caption{Underlying quality estimates and $50\%$ credible intervals (CI) of the 10 best objects according to the Mallows-Binoial model sorted from best to worst.}
+    \caption{Underlying quality estimates and $50\%$ credible intervals (CI) of the 10 best objects according to the Mallows-Binomial model sorted from best to worst.}
     \label {tab:mbin}
 \end{table}
 
@@ -798,7 +804,7 @@ The Mallows-Binomial model provides an estimate of the true underlying ranking $
 
 <!--## Joint Hierarchical Model
 
-We define a joint hierarchical model which combines scoring and ranking data in order to calculate the latent quality of objects. This model requires a transformation of the data in order to unify the scale of the scoring and ranking. To achieve this, we perform standardisation through Z-scoring as follows:
+We define a joint hierarchical model which combines scoring and ranking data in order to calculate the latent quality of objects. This model requires a transformation of the data in order to unify the scale of the scoring and ranking. To achieve this, we perform standardisation through z-scoring as follows:
 \begin{gather}
 y^{z}_{i,j} = \frac{y_{i,j} - \hat{\bar{y}}}{\hat{\sigma_y}} \\
 r^{z}_{i,j} = \frac{r_{i,j} - \hat{\bar{r}}}{\hat{\sigma_r}}
@@ -831,21 +837,22 @@ To assess the performance of the joint model we compare the model's performance 
 
 ## Comparison Between Models
 
-We compare the six fitted models in two separate ways. First, we provide and compare the final ordering each model provides for the ten best objects. Then, in order to compare how well the models distinguish the latent quality of the objects, we perform Z-scoring on the latent quality variables $\theta_i^k$. In both the Mallows and Mallows-Binomial model a latent quality variable is not estimated by the model. We therefore perform the Z-scoring on the ranks in the final ordering $\mathcal{F}_{k}(\mathcal{O})$ provided by each model. The formulas used to perform the z-scoring are available in equation (\ref{eq:zsc}). In the context of this thesis, we are interested in the performance of the models in distinguishing the highest quality objects, we therefore perform this Z-scoring uniquely on the top-10 objects according to each model, a visualisation of the z-scoring on all ranks is available in Annex \ref{z-full}.
+We compare the six fitted models in two separate ways. First, we provide and compare the final ordering each model provides for the ten best objects. Then, in order to compare how well the models distinguish the latent quality of the objects, we perform z-scoring on the latent quality variables $\theta_i^k$ and compare the z-scores $z_i^k$ between models. We consider that models with larger spread in the z-scores $z_i^k$ represent models which better separate the quality between objects, and thus better distinguish the difference in quality between objects. In both the Mallows and Mallows-Binomial model a latent quality variable is not estimated by the model. We therefore perform the z-scoring on the ranks in the final ordering $\mathcal{F}_{k}(\mathcal{O})$ provided by each model. The formulas used to perform the z-scoring are available in Equation (\ref{eq:zsc}). In the context of this thesis, we are interested in the performance of the models in distinguishing the highest quality objects, we therefore perform this z-scoring uniquely on the best 10 objects according to each model.
+
 \begin{equation} \label{eq:zsc}
 z_i^{k} =
 \begin{cases}
-\frac{\theta_{i}^k - \hat{\bar{\theta}}^k}{\hat{\sigma}_{\theta^k}}, \quad
+\frac{\hat{\theta}_{i}^k - \hat{\bar{\theta}}^k}{\hat{\sigma}_{\theta^k}}, \quad
  k = \{mean, \ hier,\ pl\text{-}lu,\ thurst \}\\
-\frac{r_{i}^k - \hat{\bar{r}}^k}{\hat{\sigma}_r^k}, \quad 
+\frac{\hat{r}_{i}^k - \hat{\bar{r}}^k}{\hat{\sigma}_r^k}, \quad 
  k = \{mlw,\ mbin\} 
 \end{cases}
 \end{equation}
 where $\hat{\bar{\theta}}^k$ and $\hat{\bar{r}}^k$ are respectively the mean score and mean rank of the ten best objects according to model $k$, and  $\hat{\sigma}_r^k$ and $\hat{\sigma}_{\theta^k}$ are respecively the standard deviation of the scores and ranks of the ten best objects according to model $k$.
 
-The results of the the comparison of final orderings can be found in Table \ref{tab:ford} and are visualised in Figure \ref{fig:ford}. All models except the Plackett-Luce model agree that the top three proposals are x17, x25, and x19 (in no particular order). The Plackett-luce suggests instead that the top three proposals are x25, x19, and x21. The models that only take the scoring data into account suggest x17 is the best proposal, while the models that only take the ranking data into account suggest that x25 takes this position. While the models generally agree on the top-3 proposals, they tend to disagree about the ordering within this top-3. The models also generally disagree on which objects are ranked between position 6 and 12 in the final ordering.
+The results of the the comparison of final orderings can be found in Table \ref{tab:ford} and are visualised in Figure \ref{fig:ford}. All models except the Plackett-Luce model agree that the best three proposals are x17, x25, and x19 (in no particular order). The Plackett-luce suggests instead that the best three proposals are x25, x19, and x21. The models that only take the scoring data into account suggest x17 is the best proposal, while the models that only take the ranking data into account suggest that x25 takes this position. While the models generally agree on the best three proposals, they tend to disagree about the ordering within this best three. The models also generally disagree on which objects are ranked between position 6 and 12 in the final ordering.
 
-The results of the comparison of model performance using Z-scoring can be found in Figure \ref{fig:zscore}. No specific high- or low- performing model can be identified from this visualisation. Models using scoring data, ranking data, and the joint data, except the Plackett-Luce model and Thurstonian model, agree and separate the objects in a similar fashion. The Plackett-Luce model reacts differently and provides greater separation in quality between the first and second object, but lower separation in quality in the objects ranked higher. The Thurstonian model reacts similarly, also showing greater separation between the top three objects and the remaining objects, but also showing lower separation within the other objects assessed.   
+The results of the comparison of model performance using z-scoring can be found in Figure \ref{fig:zscore}. No specific model, better distinguishing object quality can be identified from this visualisation. Models using scoring data, ranking data, and the joint data, except the Plackett-Luce model and Thurstonian model, agree and separate the objects in a similar fashion. The Plackett-Luce model reacts differently and provides greater separation in quality between the first and second object, but lower separation in quality in the objects ranked higher. The Thurstonian model reacts similarly, also showing greater separation between the best three objects and the remaining objects, but also showing lower separation within the other objects assessed.   
 
 \renewcommand{\baselinestretch}{1.5}
 
@@ -888,10 +895,12 @@ The results of the comparison of model performance using Z-scoring can be found 
 \renewcommand{\baselinestretch}{1}
 
 
+?? Fix plot alpha
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/results/res_z_score_finalordering.png}
-    \caption{Plot of final ordering by model with jitter: The objects can be found on the x axis, the rank position in the final ordering can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black. The models exclusively taking the ranking data into account only provide a final ordering on the objects that have obtained at minimum one rank (11 first objects).}
+    \caption{Plot of final ordering by model with jitter: The objects can be found on the x axis, the rank position in the final ordering can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black. The models solely taking the ranking data into account only provide a final ordering on the objects that have obtained at minimum one rank (11 first objects).}
     \label{fig:ford}
 \end{figure}
 
@@ -901,7 +910,7 @@ The results of the comparison of model performance using Z-scoring can be found 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/results/res_z_score_top10s.png}
-    \caption{Plot of Z-scores of the 10 best objects by model with jitter: The objects can be found on the x axis, the z-score can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black.}
+    \caption{Plot of z-scores of the 10 best objects by model with jitter: The objects can be found on the x axis, the z-score can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black.}
     \label{fig:zscore}
 \end{figure}
 
@@ -983,6 +992,7 @@ The results of the comparison of model performance using Z-scoring can be found 
 
 # Discussion
 
+?? Add INLA joint description
 
 In this thesis, we provide accessible definitions of ranking data and scoring data. We put these definitions into context and present six different models, both frequentist and Bayesian, that can be used to analyse such data. These models are explained in great detail, with both mathematically formal and plain text definitions. We fit these models to a real-world dataset and provide their results, which we compare and discuss. We also provide reproducible code for all  models, which can be used to analyse further data of the same type. All of this information provides a solid foundation for further research in analysing ranking and scoring data in the context of grant proposal quality assessment.
 
@@ -992,33 +1002,33 @@ In this thesis, we provide accessible definitions of ranking data and scoring da
 
 ## A Comparison of Models
 
-Of the six models analysed, none provide the same final ordering of the objects on this dataset. Some of this variability in the results is expected; the models solely analysing the scoring data and the models solely analysing the ranking data are fitted on two different datasets, which, by the data collection procedure, do not necessarily agree with each other. However, even within models modelling the same datasets, the models still do not agree.
+Of the six models analysed, none provides the same final ordering of the objects on this dataset. Some of this variability in the results is expected; the models solely analysing the scoring data and the models solely analysing the ranking data are fitted on two different datasets, which, by the data collection procedure, do not necessarily agree with each other. However, even within models modelling the same datasets, the models still do not agree.
 
-Within the models solely analysing scoring data, the mean score model and the hierarchical model for scores only have one difference in their final orderings: the second and third position are exchanged. Upon further inspection of the data, this is due to a very small difference in the estimated proposal quality (less than 1% of the latent qualities' estimated value), which means these two proposals can be considered equivalent in quality. The reason these model provide so similar results is because they both attempt to estimate the latent quality estimate of objects using a formulation of their mean score. However, the hierarchical model takes more factors into account, such as assessor strictness. Despite, providing the same results on this dataset, we therefore recommend using the hierarchical model for scores over the mean score model. 
+Within the models solely analysing scoring data, the mean score model and the hierarchical model for scores  have one difference in their final orderings: the second and third position are exchanged. Upon further inspection of the data, this is due to a very small difference in the estimated proposal quality (less than 1% of the latent qualities' estimated value), which means these two proposals can be considered equivalent in quality. The reason these model provide so similar results is because they both attempt to estimate the latent quality estimate of objects using a formulation of their mean score. However, the hierarchical model takes more factors into account, such as assessor strictness. Despite, providing the same results on this dataset, we therefore recommend using the hierarchical model for scores over the mean score model. 
 
-On the other hand, the models solely analysing ranking data result in many differences in the final orderings. This is due to the models being based on different principles. The Plackett-Luce model estimates the probability of an object being in the first position [ @marden_analyzing_2014]. Therefore, it strongly favours objects which consistently obtain middling to high ranks, and disadvantages objects which polarise the assessors and obtain some very high ranks and some very low ranks. The simplified Thurstonian model has the same property as the Plackett-Luce model, although slightly less pronounced. The Mallows model works differently; it attempts to find a consensus within the ranking data. This provides an estimate that, with our ranking data, is similar to the results provided by our scoring data. The reason why these estimates are so similar remain to be investigated.   These different properties show that depending on which model the user chooses to analyse their data, they are implicitly favoring some types of objects over others.   
+On the other hand, the models solely analysing ranking data result in many different final orderings. This is due to the models being based on different principles. The Plackett-Luce model estimates the probability of an object being in the first position [ @marden_analyzing_2014]. Therefore, it strongly favours objects which consistently obtain middling to high ranks, and disadvantages objects which polarise the assessors and obtain some very high ranks and some very low ranks. The simplified Thurstonian model has the same property as the Plackett-Luce model, although slightly less pronounced. The Mallows model works differently; it attempts to find a consensus within the ranking data. This provides an estimate that, with our ranking data, is similar to the results provided by our scoring data. The reason why these estimates are so similar remain to be investigated.   These different properties show that depending on which model the user chooses to analyse their data, they are implicitly favoring some types of objects over others.   
 
-The Mallows-Binomial model joins scoring and ranking data to provide the final ordering. Using both these sources of information, the latent quality estimates of the Mallows-Binomial model seem to provide more precise estimates than the hierarchical model. Indeed, the confidence interval bands of the Mallows-Binomial model are smaller than the credible interval bands of the Bayesian hierarchical model. While these two intervals cannot be compared one to one, looking at the results in Figure \ref{fig:jags_inla_hier} and Figure \ref{fig:Mallows_bin_ranks}, it seems that the Mallows-Binomial better separates the quality of the proposals than the Bayesian hierarchical model. However, despite this advantage, the Mallows-Binomial model still has some limitations. Due to its definition [@pearce_unified_2022], the ranking data only contributes very little to the model in comparison to the scoring data. Indeed, the contribution to the likelihood per assessor is $n$ observations for the scoring data and $1$ for the ranking data, in total in our dataset, this represents, $n*m = 10 *28 = 280$ scoring observations, and only $m = 10$ observations for the ranking data. By analyzing data with this model, a user implicitly decides that the scoring data is of higher importance than the ranking data. 
+The Mallows-Binomial model joins scoring and ranking data to provide the final ordering. Using both these sources of information, the latent quality estimates of the Mallows-Binomial model seem to provide more precise estimates than the hierarchical model. Indeed, the confidence interval bands of the Mallows-Binomial model are smaller than the credible interval bands of the Bayesian hierarchical model. While these two intervals cannot be compared one to one, looking at the results in Figure \ref{fig:jags_inla_hier} and Figure \ref{fig:Mallows_bin_ranks}, it seems that the Mallows-Binomial better separates the quality of the proposals than the Bayesian hierarchical model. However, despite this advantage, the Mallows-Binomial model still has some limitations. Due to its definition [@pearce_unified_2022], the ranking data only contributes very little to the model in comparison to the scoring data. Indeed, the contribution to the likelihood per assessor is $n$ observations for the scoring data and $1$ for the ranking data. In total, in our dataset, this represents $n*m = 10 *28 = 280$ scoring observations, and only $m = 10$ observations for the ranking data. By analyzing data with this model, a user implicitly decides that the scoring data is of higher importance than the ranking data. 
 
 Throughout these analyses, we show that funding agencies, when choosing a model to analyse the scoring and ranking data, are directly making a decision to advandage or disadvantage some types of proposals. Any decision affecting the assessment of proposal quality should be disclosed [ @harman_management_1998 ]. Therefore, the choice of model, when done blindly and \textit{post hoc}, can be considered unfair. We suggest that funding agencies should not only disclose the evaluation criteria in a call for proposal, but also disclose their data analysis procedure in order to provide a transparent and fair grant allocation.
 
 ## Bayesian Model Fitting
 
-In the description of the Bayesian hierarchical model for scores, we explore two frameworks for posterior distribution estimation: Markov-chain Monte-Carlo (\textsc{Mcmc}) using the \texttt{rjags} package, and Integrated Nested Laplace Approximation (\textsc{Inla}) using the \texttt{inla} package. We provide a translation of the \texttt{jags} code to fit the hierarchical model for scores provided in Heyard et al. [-@heyard_rethinking_2022] into the \textsc{Inla} framework and show that both approaches provide very similar results. Despite the similar results, there are three important distinctions between both frameworks. First of all, \textsc{Mcmc}, for a correctly specified model, can be shown to converge towards the true posterior distribution of a model [@hanada_mcmc_2022], \textsc{Inla} on the other hand, can only provide an approximation of this distribution [@rue_approximate_2009]. Secondly, \textsc{Mcmc} can be used to fit any solvable Bayesian model [@hanada_mcmc_2022], while \textsc{Inla} is only restricted to latent Gaussian models, a model class which is equivalent to general additive models [@rue_approximate_2009]. Finally, while \textsc{Mcmc} model fitting is a very involved process, the use of \textsc{Inla} is more accessible. Indeed, \textsc{Mcmc} model fitting requires knowledge of package specific syntax, and a significant amount of work and knowledge is required to perform convergence diagnostics [@roy_convergence_2020]. \textsc{Inla} uses syntax very close to base \texttt{R}, and by design, does not require convergence diagnoses. In our case, the Bayesian hierarchical model for scores can be formulated in the \textsc{Inla} framework; we therefore recommend its use over \textsc{Mcmc}.
+In the description of the Bayesian hierarchical model for scores, we explore two frameworks for posterior distribution estimation: Markov-chain Monte-Carlo (\textsc{Mcmc}) using the \texttt{rjags} package, and Integrated Nested Laplace Approximation (\textsc{Inla}) using the \texttt{inla} package. We provide a translation of the \texttt{jags} code to fit the hierarchical model for scores provided in Heyard et al. [-@heyard_rethinking_2022] into the \textsc{Inla} framework and show that both approaches provide very similar results. Despite the similar results, there are three important distinctions between both frameworks. First of all, \textsc{Mcmc}, for a correctly specified model, can be shown to converge towards the true posterior distribution of a model [@hanada_mcmc_2022], \textsc{Inla} on the other hand, can only provide an approximation of this distribution [@rue_approximate_2009]. Secondly, \textsc{Mcmc} can be used to fit any solvable Bayesian model [@hanada_mcmc_2022], while \textsc{Inla} is only restricted to latent Gaussian models, a model class which is equivalent to generalized additive models with splines [@rue_approximate_2009]. Finally, while \textsc{Mcmc} model fitting is a very involved process, the use of \textsc{Inla} is more accessible. Indeed, \textsc{Mcmc} model fitting requires knowledge of package specific syntax, and a significant amount of work and knowledge is required to perform convergence diagnostics [@roy_convergence_2020]. \textsc{Inla} uses syntax very close to base \texttt{R}, and by design, does not require convergence diagnoses. In our case, the Bayesian hierarchical model for scores can be formulated in the \textsc{Inla} framework; we therefore recommend its use over \textsc{Mcmc}.
 
 ## Paths Towards Joint Modelling
 
 The ranking data and scoring data, while both attempting to assess the quality of objects, provide different information about them. The scoring data provides a general assessment of proposal quality on a given scale ("is this object of high or low quality?"), while the ranking data provides a direct comparative assessment of the proposal quality ("is this object of better quality than that other object?"). These two types of information should, in theory, complement each other, as the ranking information may enable us to distinguish small differences in quality between two object with very similar scores. We propose three different methods to jointly model scores and ranks. 
 
-We demonstrated in this thesis how the Mallows-Binomial model already combines scoring and ranking data [@pearce_unified_2022]. However, we also show that this model, while incorporating both data types, lends more importance to scoring data than ranking data. In order to create a model that considers both sources of information as equal, one could consider modifying the likelihood function of the Mallows-Binomial model to a weighted likelihood [@markatou_weighted_1998]. The weight of the ranking observations could then be increased and the weights of the scoring observations decreased. This would jointly model Ranking and scoring data on the same scale, without favouring any data type.
+We present in this thesis how the Mallows-Binomial model already combines scoring and ranking data [@pearce_unified_2022]. However, we also show that this model, while incorporating both data types, lends more importance to scoring data than ranking data. In order to create a model that considers both sources of information as equal, one could consider modifying the likelihood function of the Mallows-Binomial model to a weighted likelihood [@markatou_weighted_1998]. The weight of the ranking observations could then be increased and the weights of the scoring observations decreased. This would jointly model ranking and scoring data, without favouring any data type.
 
-A second approach to joint modelling would be to create a hierarchical model in \textsc{Inla}, containing both a scoring and a ranking component with correlated random effects. A framework to integrate this in \texttt{R} already exists: the \texttt{inlajoint} package by Rustand et al. [-@rustand_fast_2024]. However, \textsc{Inla} can only fit models which are latent Gaussian. An implementation in this framework would require either a latent Gaussian model for ranking data, which to our knowledge does not exist, or a transformation of the ranking data into a scale which could then be used in a latent Gaussian model. This transformation could consist in using ranks as scores, which is a polarising subject in literature [@stevens_theory_1946; @mosteller_data_1977; @velleman_nominal_1993], or could consist in directly using the results of a Plackett-Luce, or Thurstonian model as target variable in a Gaussian model. Using one of these options would enable us to jointly model Ranking and scoring data on the same scale, albeit with an additional transformation step.
+A second approach to joint modelling would be to create a hierarchical model in \textsc{Inla}, containing both a scoring and a ranking component with correlated random effects. A framework to integrate this in \texttt{R} already exists: the \texttt{inlajoint} package by Rustand et al. [-@rustand_fast_2024]. However, \textsc{Inla} can only fit models which are latent Gaussian. An implementation in this framework would require either a latent Gaussian model for ranking data, which to our knowledge does not exist, or a transformation of the ranking data into a scale which could then be used in a latent Gaussian model. This transformation could consist in using ranks as scores, which is a polarising subject in literature [@stevens_theory_1946; @mosteller_data_1977; @velleman_nominal_1993], or could consist in directly using the results of a Plackett-Luce, or Thurstonian model as target variable in a Gaussian model. Using one of these options would enable us to jointly model ranking and scoring data, albeit with an additional transformation step.
 
 A third approach to joint modelling is to use the ranking data to create priors for latent quality variables, which can then be used in the Bayesian hierarchical model for scores. The priors could be created from a generalised normal Thurstonian model, as defined in Annex \ref{lik:thurst}. Unfortunately, no closed form formulation of the likelihood of of the generalised normal Thurstonian model exists, so an \textsc{Mcmc} simulation would be necessary to estimate these distributions. A Gibbs sampling algorithm to estimate such distributions using a Thurstonian model on ranking data is already available in Yao and Böckenholft [-@yao_bayesian_1999]. The \textsc{Mcmc} algorithm and the Bayesian hierarchical model for scores could thus be run sequentially in order to obtain a joint model. 
 
 ## Limitations
 
-This work has several limitations, it was only performed on a single real-world dataset containing complete scoring data and partial ranking data. It is possible that the results we report and the findings we discuss are heavily influenced by the properties of these specific data and are not generalisable. Moreover, the fact that the ranking data is only partial, greatly increases the complexity of joint modelling. In this thesis, we do not discuss methods to deal with this incompleteness. However, we believe that these incomplete ranking data reflect real-world scenarios, where assessors' times are limited, and this property should be taken into account in further joint modelling of ranks and scores. 
+This work has several limitations. The model comparisons were only performed on a single real-world dataset containing complete scoring data and partial ranking data. It is possible that the results we report and the findings we discuss are heavily influenced by the properties of these specific data and are not generalisable. Moreover, the fact that the ranking data is only partial, greatly increases the complexity of joint modelling. In this thesis, we do not discuss methods to deal with this incompleteness. However, we believe that these incomplete ranking data reflect real-world scenarios, where assessors' times are limited, and this should be taken into account in further joint modelling of ranks and scores. 
 
 In this thesis, we only describe a selection of models relevant for scoring and ranking data. This selection is neither exhaustive nor was it systematically created. Moreover, assessing the preciseness and statistical properties of the estimates provided by such models is a complicated task; different models favour different objects traits, and the decision of which traits are important depends on the real-world application of the model. In order to compare models effectively, the specific real-world objective should be defined before the analysis. Many different metrics may be better suited to assess model quality, and many other models may be better suited for analysing scoring and ranking data as a whole than the ones we use in this thesis.
 
@@ -1028,7 +1038,7 @@ In the model fitting, we also only select single, specific packages for each mod
 
 ## Conclusion & Outlook
 
-We performed the preliminary work necessary for understanding grant proposal panel data containing both scoring and ranking components. We describe six models, and find that, depending on the model selected, certain object traits may be advantaged or disadvantaged in the assessment of quality. We highlight the need for a deliberate model selection, and clear transparent communication already during the call for proposal. Subsequently, we provide paths to potential new models that have yet to be used in this context. 
+We performed the preliminary work necessary for understanding grant proposal panel data containing both scoring and ranking components. We describe six models, and find that, depending on the model selected, certain object traits may be advantaged or disadvantaged in the assessment of quality. We highlight the need for a deliberate model selection, and clear, transparent communication already during the call for proposal. Subsequently, we provide paths to potential new models that have yet to be used in this context. 
 
 We believe that in the case of grant proposal quality assessment, a "one-size fits all" approach to modelling is not the solution. In the future, we hope it will be possible to provide robust and tailored recommendations of models which fit the exact need, and reflect the exact intentions of funders. In order to obtain these robust recommendations, a thorough analysis of models, on multiple real-world and simulation datasets is still necessary. This thesis is the first step towards this path, but much work remains to be done.
 
@@ -1548,10 +1558,10 @@ fit_inla <-
 ```
 
 
-## Z-scoring on Entire Dataset
+## z-scoring on Entire Dataset
 \label{z-full}
 
-Figure \ref{fig:zscore_whole} provides an overview of the Z-scores of all objects. This graph is to be interpreted with great caution. Despite the ranking models seemingly distinguishing the top 11 proposals better from one another than the scoring models, in reality it is not the case. Due to the fact that the data we use only provides partial ranking, the z-scoring on the ranking models only take the top-11 objects into account in the standardisation process. This artificially inflates the difference in quality between the objects when compared to the models which take all objects into account for the standardisation. 
+Figure \ref{fig:zscore_whole} provides an overview of the z-scores of all objects. This graph is to be interpreted with great caution. Despite the ranking models seemingly distinguishing the best 11 proposals better from one another than the scoring models, in reality it is not the case. Due to the fact that the data we use only provides partial ranking, the z-scoring on the ranking models only take the best 11 objects into account in the standardisation process. This artificially inflates the difference in quality between the objects when compared to the models which take all objects into account for the standardisation. 
 
 
 \begin{figure}[H]
