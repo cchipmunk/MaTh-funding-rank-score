@@ -1,0 +1,176 @@
+---
+title: "Master Thesis supplement: Joint modelling"
+format: pdf
+---
+\vspace{-3cm}
+
+\begin{center}
+\Large \textbf{"Towards Bayesian joint modelling of ranks and scores} \\
+\textbf{in the assessment of grant proposal quality"} \\
+\vspace{0.5cm}
+Zürich, \today
+
+\end{center}
+
+## Introduction
+
+This document describes a novel Bayesian approach to jointly model scoring and ranking data using the \texttt{Inlajoint} package (?? ref inla joint). We first define and describe the new model. We then apply it on the Gallo et al. (??) dataset and report the results it provides. Finally, we discuss the novel model's benefits and drawbacks in comparison to other joint modelling approaches. During the model fitting, we provide all code necessary to reproduce the analysis performed in this document.
+
+## Model definition
+
+To unify the scale of the scoring and ranking data, we first transform the data through z-scoring as follows:
+\begin{gather*}
+y^{z}_{i,j} = \frac{y_{ij} - \hat{\bar{y}}}{\hat{\sigma_y}} \\
+r^{z}_{i,j} = \frac{r_{ij} - \hat{\bar{r}}}{\hat{\sigma_r}}
+\end{gather*}
+Using the standardised $y^{z}_{i,j}$ data we modify the Bayesian hierarchical model for scores defined by Heyard et al. (??) in order to obtain:
+\begin{gather*}
+y^{z}_{i,j} = \beta_0^y + \theta^{y}_{i} + \lambda^{y}_{j} \\
+\theta^{y} \sim N(0, \sigma_{\theta^y}^2) \quad \quad \beta_0^y \sim N(\mu^y, \sigma_y^2)
+\end{gather*}
+where $\theta^{y}_{i}$ represent the latent qualities of an object $o_i$ according to the transformed scoring data, $\lambda^{y}_{j}$ represent the assessor-specific difference in strictness and scoring habit, and $\beta_0^y$ represents and estimates the mean standardised score of all objects. 
+
+Analogously, we create a second model for the transformed ranking data as follows:
+\begin{gather*}
+y^{z}_{i,j} = \beta_0^y + \theta^{r}_{i} \\
+\theta^{r} \sim N(0, \sigma_{\theta^r}^2) \quad \quad \beta_0^r \sim N(\mu^r, \sigma_r^2)
+\end{gather*}
+where $\theta^{r}_{i}$ represent the latent qualities of an object $o_i$ according to the transformed ranking data, and $\beta_0^r$ represents and estimates the mean standardised rank of all objects. 
+
+We join these models by deffining a correlation constraint $\text{corr}(\theta^{y},  \theta^{r}) = \rho_{\theta}$ between the random effects of both models, which are in practice the latent quality variables. The \texttt{Inlajoint} package does this automatically and fits both models simultaneously taking this correlation into account. This provides the final model:
+\begin{gather}
+\begin{cases}
+    y^{z}_{i,j} = \beta_0^y + \theta^{y}_{i} + \lambda^{y}_{j}\nonumber  \\
+    r^{z}_{i,j} = \beta_0^r + \theta^{r}_{i} \nonumber
+\end{cases} \\
+\theta^{y} \sim N(0, \sigma_{\theta^y}^2) \quad \quad  \theta^{r} \sim N(0, \sigma_{\theta^r}^2) \nonumber \\
+\text{corr}(\theta^{y},  \theta^{r}) = \rho_{\theta} \\
+\beta_0^y \sim N(\mu^y, \sigma_y^2) \quad \quad \beta_0^y \sim N(\mu^r, \sigma_r^2) \nonumber
+\end{gather}
+
+## Model fitting & Results
+In the Gallo et al. (??) dataset, there are 259 scoring observations, but only 49 ranking observations. This provides us with three paths for the model fitting: (1) We simply analyse the data as-is and ignore the missingness of the ranking data. (2) We analyse only the complete cases in this data set and remove 210 scoring observation. (3) We perform weighting to account for the difference in the amount of observations. While path (3) is the most promising for real-world applications, it is beyond the scope of this thesis. We therefore only provide an example of a model fit using path (1) and path (2).  
+
+### As-is analysis
+
+The code below was used to fit the joint model:
+
+```{r}
+#| echo: false
+#| output: false
+
+library(INLA)
+library(INLAjoint)
+```
+
+
+```{r}
+#| echo: false
+#| output: false
+
+# Importing scoring and ranking data
+dat_scores <- read.csv("../data/clean/scores_long.csv")
+dat_ranks <- read.csv("../data/clean/rank_full_long.csv")
+
+# Joining scores and ranks
+dat_joint <- dat_scores
+dat_joint$value_rank <- rep(NA, 280)
+dat_joint$value_rank[dat_joint$RandomRevID %in% unique(dat_ranks$RandomRevID)] <-
+  dat_ranks$value
+
+#Substituting grant_id for INLA joint
+dat_joint$grant_id <- as.numeric(gsub('x', replacement =  "", dat_joint$grant_id))
+
+# Only select complete cases
+dat_as_is <- dat_joint
+dat_c_cases <- dat_joint[complete.cases(dat_joint),] 
+
+# Standardising everything
+dat_as_is$std_score <- (dat_as_is$value - mean(dat_as_is$value, na.rm = T)) / sd(dat_as_is$value, na.rm = T)
+dat_as_is$std_rank  <- (dat_as_is$value_rank - mean(dat_as_is$value_rank, na.rm = T)) / sd(dat_as_is$value_rank, na.rm = T)
+
+dat_as_is <- dat_as_is[, c(1,2,5,6)]
+
+# Standardising everything
+dat_c_cases$std_score <- (dat_c_cases$value - mean(dat_c_cases$value)) / sd(dat_c_cases$value)
+dat_c_cases$std_rank  <- (dat_c_cases$value_rank - mean(dat_c_cases$value_rank)) / sd(dat_c_cases$value_rank)
+
+dat_c_cases <- dat_c_cases[, c(1,2,5,6)]
+
+```
+
+```{r}
+#| warning: false
+
+
+# Overview of data
+head(dat_as_is)
+
+# Fitting model
+inla_sr_joint_as_is <- joint(
+  formLong = list(
+    std_score  ~ 1 + (1 | grant_id) + (1| RandomRevID),
+    std_rank  ~ 1 + (1 | grant_id) 
+  ),
+  dataLong = dat_as_is, id = "grant_id",
+  family  = c("gaussian", "gaussian"),
+  corLong = T   
+)
+
+# Please check the correlation structure again if you refit model ??
+
+```
+
+The results of the as-is model are the following:
+
+```{r}
+
+cat("TODO ??")
+```
+
+
+### Complete cases
+
+The code below was used to fit the joint model:
+
+```{r}
+#| warning: false
+
+
+# Overview of data
+head(dat_c_cases)
+
+# Fitting model
+inla_sr_joint_complete <- joint(
+  formLong = list(
+    std_score  ~ 1 + (1 | grant_id) + (1| RandomRevID),
+    std_rank  ~ 1 + (1 | grant_id) 
+  ),
+  dataLong = dat_c_cases, id = "grant_id",
+  family  = c("gaussian", "gaussian"),
+  corLong = T   
+)
+
+# Retrieve means
+inla_sr_joint_complete$summary.random $IDIntercept_L1$mean
+
+
+
+# Please check the correlation structure again if you refit model ??
+
+```
+
+and provided the following results:
+
+```{r}
+cat("TODO ??")
+```
+
+
+## Discussion and limitations
+
+Advantage: Proof-of-concept that this model can be fitted. Code available for further extensions.
+
+limitations: Check correlation structures, using z-scoring on ranking data is a polarising topic in the literature. Complete case analysis and ignoring missingness both wrong.  
+
+Future: Check if combining the data can help in comparison to separate on simulation data where the ground truth is known. Comparison with a simple inla fit just on scores and a simple fit just on ranks.

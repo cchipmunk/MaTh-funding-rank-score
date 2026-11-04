@@ -193,21 +193,21 @@ ggplot(dat_scaled[1:10,]) +
 
 
 ggplot(dat2_scaled[1:10,]) +
-  geom_jitter( aes(x=obj, y= as.numeric(mean_s), colour = "Mean"), 
+  geom_jitter( aes(x=obj, y= as.numeric(mean_s), colour = "Mean"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
-  geom_jitter( aes(x=obj, y= as.numeric(hier_s), colour = "Hierarchical"), 
+  geom_jitter( aes(x=obj, y= as.numeric(hier_s), colour = "Hierarchical"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
   scale_colour_manual(name = "Models using scoring", values = values_obj, breaks = model_names ) +
   new_scale_colour() +
-  geom_jitter( aes(x=obj, y= as.numeric(p_lu_s), colour = "Plackett-Luce"),
+  geom_jitter( aes(x=obj, y= as.numeric(p_lu_s), colour = "Plackett-Luce"),alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
-  geom_jitter( aes(x=obj, y= as.numeric(mallows_s), colour = "Mallows"),
+  geom_jitter( aes(x=obj, y= as.numeric(mallows_s), colour = "Mallows"),alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
-  geom_jitter( aes(x=obj, y= as.numeric(thurst_s), colour = "Thurstonian"),
+  geom_jitter( aes(x=obj, y= as.numeric(thurst_s), colour = "Thurstonian"),alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
   scale_colour_manual(name = "Models using ranking", values = values_obj, breaks = model_names ) +
   new_scale_colour() +
-  geom_jitter( aes(x=obj, y= as.numeric(mallows_bin_s), colour = "Mallows-Binomial"),
+  geom_jitter( aes(x=obj, y= as.numeric(mallows_bin_s), colour = "Mallows-Binomial"),alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
   scale_colour_manual(name = "Joint model", values = values_obj, breaks = model_names ) +
   scale_y_continuous(name = "Z-score of latent quality") +
@@ -244,21 +244,21 @@ dat_lin_o$obj <- factor(dat_lin_o$obj,
                         ordered = T)
 
 ggplot(dat_lin_o) +
-  geom_jitter( aes(x=obj, y= as.numeric(mean_s), colour = "Mean"), 
+  geom_jitter( aes(x=obj, y= as.numeric(mean_s), colour = "Mean"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
-  geom_jitter( aes(x=obj, y= as.numeric(hier_s), colour = "Hierarchical"), 
+  geom_jitter( aes(x=obj, y= as.numeric(hier_s), colour = "Hierarchical"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
   scale_colour_manual(name = "Models using scoring", values = values_obj, breaks = model_names ) +
   new_scale_colour() +
-  geom_jitter( aes(x=obj, y= as.numeric(p_lu_s), colour = "Plackett-Luce"),
+  geom_jitter( aes(x=obj, y= as.numeric(p_lu_s), colour = "Plackett-Luce"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
-  geom_jitter( aes(x=obj, y= as.numeric(mallows_s), colour = "Mallows"),
+  geom_jitter( aes(x=obj, y= as.numeric(mallows_s), colour = "Mallows"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
-  geom_jitter( aes(x=obj, y= as.numeric(thurst_s), colour = "Thurstonian"),
+  geom_jitter( aes(x=obj, y= as.numeric(thurst_s), colour = "Thurstonian"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
   scale_colour_manual(name = "Models using ranking", values = values_obj, breaks = model_names ) +
   new_scale_colour() +
-  geom_jitter( aes(x=obj, y= as.numeric(mallows_bin_s), colour = "Mallows-Binomial"),
+  geom_jitter( aes(x=obj, y= as.numeric(mallows_bin_s), colour = "Mallows-Binomial"), alpha = 0.6, 
                height = jitter_amount, width = jitter_amount, size = 2) +
   scale_colour_manual(name = "Joint Models ", values = values_obj, breaks = model_names ) +
   scale_y_continuous(name = "Rank in final ordering") +
@@ -269,3 +269,4 @@ ggplot(dat_lin_o) +
   ggtitle(paste("Final ordering of all objects by model, with funding line")) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=0.5))
+

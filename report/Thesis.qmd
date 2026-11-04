@@ -187,7 +187,7 @@ Scores are obtained by having assessors assign a grade to each object by estimat
 
 ::: {.callout-note title="**Definition: Scores**" }
 
-**Scores** $S_j$ are a set of grades given to all of $\mathcal{O}$ by an assessor $j$. The score given to a specific object $o_i \ \epsilon \ \mathcal{O}$ by a specific assessor $j$ will be written $y_{i,j}$ with $i \ \epsilon \  \{1,...,n\}$ and $j \ \epsilon \ \{1, ..., m\}$.
+**Scores** $S_j$ are a set of grades given to all of $\mathcal{O}$ by an assessor $j$. The score given to a specific object $o_i \ \epsilon \ \mathcal{O}$ by a specific assessor $j$ will be written $y_{ij}$ with $i \ \epsilon \  \{1,...,n\}$ and $j \ \epsilon \ \{1, ..., m\}$.
 
 **Scoring data** $S = \{S_1, ..., S_m\}$ are the observed scores given by all assessors.
 
@@ -203,7 +203,7 @@ In contrast to scores, rankings are obtained by having each assessor directly co
 **Linear orders** $\mathbf{\mathcal{L}(\mathcal{O})}$ are the set of all possible ranking orders of $\mathcal{O}$. For any pair of objects $o_i$, $o_l$ $\in \mathcal{O}$, we will denote $o_i$ $\succ$ $o_l$ if $o_i$ is preferred to $o_l$.
 
 
-**Ranking order** $R_j \ \epsilon \ \mathcal{L}(\mathcal{O})$ is the linear order given by a specific assessors $j \ \epsilon \ \{1,...,m\}$ to $\mathcal{O}$. The rank position given to an object $o_i \in \mathcal{O}$ by an assessor $j$ will be denoted $r_{i,j}$.
+**Ranking order** $R_j \ \epsilon \ \mathcal{L}(\mathcal{O})$ is the linear order given by a specific assessors $j \ \epsilon \ \{1,...,m\}$ to $\mathcal{O}$. The rank position given to an object $o_i \in \mathcal{O}$ by an assessor $j$ will be denoted $r_{ij}$.
 
 **Ranking data** $R = \{R_1, ..., R_m\}$ are the observed ranking orders given by all assessors.
 
@@ -295,9 +295,7 @@ The data are unfortunately incomplete. In the scoring data there are 21 missing 
 
 
 ## Scoring Data
-?? Explain ICC: as we are assessing the agreement between xx with xx we use ICC of this type
-
-An overview of the scoring data can be found in Figure \ref{fig:expl}. The inter-assessor reliability calculated using a two-way, mixed effect, fixed rater ICC is 0.91 (95% CI from 0.87 to 0.96), which signifies that the grades given by the assessors have a good to excellent agreement [@koo_guideline_2016]. In the exploratory analysis, we found a significant digit preference for the score 3, and no score worse than (i.e. higher than) 4 was given to any of the objects being evaluated. Nevertheless, this digit preference and the lack of high scores will not affect our analysis.
+The inter-assessor reliability in this dataset was calculated using a two-way, mixed effect, fixed rater ICC. We use the 2-way mixed effect version as as all raters are assessing the same set of objects, and we use the fixed rater version as we want to measure the agreement within the fixed individual assessors in this group. The ICC estimate is 0.91 (95% CI from 0.87 to 0.96), which signifies that the grades given by the assessors have good to excellent agreement [@koo_guideline_2016]. In the exploratory analysis, we found a significant digit preference for the score 3, and no score worse than (i.e. higher than) 4 was given to any of the objects being evaluated (see Figure \ref{fig:expl}, left). All assessors used approximately the same span of grades (see Figure \ref{fig:expl}, right). Nevertheless, we believe this digit preference and the lack of high scores will not affect our analysis.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figures/data/scores_figures.png}
@@ -312,8 +310,7 @@ There are 21 missing data points in the scoring data. This represents $7.5\ \%$ 
 
 ## Ranking Data
 
-An overview of the ranking data can be found in Figure \ref{fig:rank_expl}. Each assessor reported their prefered best 6 objects. Thus, we obtain information about the ranking on seven levels: ranks one through six, and a rank greater or equal to seven. Assessors were not allowed to consider ties in the positions one to six. The inter-assessor reliability calculated using a two-way, mixed effect, fixed rater ICC is 0.55 (95% CI from 0.33 to 0.8), which signifies that the grades given by the assessors have a moderate level of agreement [@koo_guideline_2016]. 
-
+An overview of the ranking data can be found in Figure \ref{fig:rank_expl}. Each assessor reported their prefered best 6 objects. Thus, we obtain information about the ranking on seven levels: ranks one through six, and a rank greater or equal to seven. Assessors were not allowed to consider ties in the positions one to six. The inter-assessor reliability calculated using a two-way, mixed effect, fixed rater ICC is 0.55 (95% CI from 0.33 to 0.8), which signifies that the ranks given by the assessors have a moderate level of agreement [@koo_guideline_2016]. 
 
 There are 11 missing data points in the ranking data, five MCI, and six MCAR, which represent $18.3\%$ of the ranking data. The MCAR data are due to an assessor ignoring the ranking task. We remove them from the dataset as they do not provide any information about the object qualities. However, due to the nature of the models we are using, the MCI data are problematic. The models assume that when an object has a missing value, it did not make it into the best six of an assessor. Reformulated, a missing value given by a specific assessor represents an object quality worse than the 6th ranked object according to them. However, in the case of MCI data, the missing values do not provide any information about the quality of the object. Therefore, there is a need for data imputation. 
 
@@ -329,18 +326,15 @@ Upon further inspection of the data, three of the five MCI datapoints in this da
     \label{fig:rank_expl}
 \end{figure}
 
-## Agreement between Scoring and Ranking Data
+## Comparisons between Scoring and Ranking Data
 
-?? Do median score and median rank (!)
-?? Add : All object in best 6 have grades between 1 and 2 
-
-The scoring and ranking data are positively correlated with a Pearson correlation coefficient of 0.485. This signifies higher perceived qualities in the scoring data are associated with higher perceived quality in the ranking data. A visual representation of this correlation can be found in Figure \ref{fig:agreement} .
+All objects that made it into the best 6 objects of at least one assessor only obtained scores $y_{ij} \leq 2$. Eight out of the nine assessors provide a ranking order $R_j$ that is different from sorting the scores $y_{ij}$ they gave to each object in ascending order. Moreover, giving rankings to objects forced all assessors to break ties they gave in the scoring. In order to visualise the relationship between scores and ranks, we plot the mean score and the mean rank of all objects having made it into the ranking of at least one assessor in Figure \ref{fig:agreement}.   
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\linewidth]{figures/data/cor_rank_score}
-    \caption{A plot of the agreement between scores and ranks: On the x-axis, the scores given to the objects. On the y axis, the rank given to the objects. Each datapoint represents a score-rank pair in the data.}
+    \caption{A plot of the mean scores and mean ranks obtained by objects present in at least one of the assessors' rankings: On the x-axis, the mean scores given to the objects calculated from the scores given, by all assessor. On the y axis, the mean rank given to each objects calculated from the rankings given to the objects, by the assessors which included the object in their best six ranking.}
     \label{fig:agreement}
 \end{figure}
 
@@ -392,13 +386,9 @@ A first and straightforward approach proposed by Zehlike et al. [-@zehlike_fairn
 \hat{\theta}_i^{\ mean} = \bar{y}_i - \bar{y} 
 \end{gather*}
 
-Note that, by convention, high quality objects will have negative values of latent quality $\hat{\theta}_i^{\ mean}$. This model relies on many strong assumptions. First, it assumes that each assessor has the exact same scoring habits, and is well calibrated with themselves and the rest of the group (for example, that no assessor is stricter or more lenient than their peers). Second, it also assumes that each object is evaluated completely independently from all other objects. Moreover, unless the number of assessors is extremely large, it cannot be used to provide any reasonable uncertainty estimates in its results [@kaplan_sample_2008]. In this thesis, we fit this model using an \texttt{R} script [@R_core].
-
-?? Kaplan probably either deleted or sent to discussion as is true for all models using scores.
+Note that, by convention, high quality objects will have negative values of latent quality $\hat{\theta}_i^{\ mean}$. This model relies on many strong assumptions. First, it assumes that each assessor has the exact same scoring habits, and is well calibrated with themselves and the rest of the group (for example, that no assessor is stricter or more lenient than their peers). Second, it also assumes that each object is evaluated completely independently from all other objects. In this thesis, we fit this model using an \texttt{R} script [@R_core].
 
 The mean scores model provides an estimate of the latent quality $\hat\theta_{i}^{\ mean}$ of the objects from the scoring data. Figure \ref{fig:mm} shows the latent quality estimates for the ten best objects according to this model. The mean score model would accept objects x17, x19, and x25. Object x19 and x25 are tied for second place, and the difference in latent quality between the tied second place and the fourth place object is very low. The latent quality estimates for the ten best objects according to this model are provided in Table \ref{tab:mm}.
-
-?? TODO: Fix figure, add 0.4 in y axis so that we can compare to figure 7
 
 \begin{figure}[H]
     \centering
@@ -434,26 +424,24 @@ The mean scores model provides an estimate of the latent quality $\hat\theta_{i}
 
 ### Hierarchical Model for Scores
 
-?? Rewrite, we start with the model from Rachel -> modify -> and try to match INLA
-?? Plot priors so we can show that both are same
-
-To alleviate the assessor calibration assumptions discussed in @sec-mean, Heyard et al. [-@heyard_rethinking_2022] proposed a hierarchical model for scores that includes parameters to model the different scoring behaviors of the assessors. This model still offers a latent object quality variable $\theta_i^{\ hier}$ based on the mean of the scores obtained by each object. We defined a slightly modified version of this model as follows:
+To alleviate the assessor calibration assumptions discussed in @sec-mean, Heyard et al. [-@heyard_rethinking_2022] proposed a hierarchical model for scores that includes parameters to model the different scoring behaviors of the assessors. This model still offers a latent object quality variable $\theta_i^{\ hier}$. We define a slightly modified version of this model, with gamma priors instead of flat priors. This modification allows us to fit the model using two different posterior distribution estimation procedure and compare their results. It is defined as follows:
 
 \begin{gather*}
-y_{ij} | \theta_i^{\ hier}, \lambda_{ij} \sim N(\mu + \theta_i^{\ hier} + \lambda_{j}\ , \tau_y^2) \\
-\mu \sim N(0, 100) \quad \quad \theta_i^{\ hier} \sim N(0,  \tau^2_{\theta}) \quad \quad \lambda_{j} \sim N(0, \tau_\lambda^2) \\
-\tau_y \sim G(1.5,1.5),  \quad \quad \tau_{\theta} \sim G(1.5,1.5) \quad \quad
-\tau_\lambda \sim G(1.5,1.5)
+y_{ij} | \theta_i^{\ hier}, \lambda_{ij} \sim N(\mu + \theta_i^{\ hier} + \lambda_{j}\ , \frac{1}{\tau_y}) \\
+\mu \sim N(0, 1000) \quad \quad \theta_i^{\ hier} \sim N(0,  \frac{1}{\tau_{\theta}}) \quad \quad \lambda_{j} \sim N(0, \frac{1}{\tau_\lambda}) \\
 \end{gather*}
-
-
-With $\mu$ taking the value of the mean score of all objects, and $\lambda_{j}$ being the assessor-specific effect representing the differences in scoring habits and strictness. Given the scores are grades given between one and five, we fix gamma priors for the standard deviations $\tau$ with distributions which lie within plausible values for these parameters, with modes of $1$, and standard deviations of $2/3$. Using this model, we obtain and extract the posterior distribution for the latent quality of each object $\theta_i^{\ hier}$, which we use to provide credible intervals of $\theta_i^{\ hier}$. This model makes use of the funding line, Heyard et al. [-@heyard_rethinking_2022] propose that all proposals that have a 50\% credible interval of $\theta_i^{\ hier}$ crossing the funding line should be considered in a lottery instead of being directly accepted or rejected. 
+with priors:
+\begin{gather*}
+\tau_y \sim G(1,0.1),  \quad \quad \tau_{\theta} \sim G(1,1) \quad \quad
+\tau_\lambda \sim G(1,1)
+\end{gather*}
+with $\mu$ representing and estimating the mean score of all objects, and $\lambda_{j}$ being the assessor-specific effect representing the differences in scoring habits and strictness. Given the scores are grades given between one and five, we fix gamma priors for the precision $\tau$ with distributions which lie within plausible values for these parameters, with modes of $1$, and standard deviations of $1$. Using this model, we obtain and extract the posterior distribution for the latent quality of each object $\theta_i^{\ hier}$, which we use to provide credible intervals of $\theta_i^{\ hier}$. This model can be used in combination with a funding line, Heyard et al. [-@heyard_rethinking_2022] propose that all proposals that have a 50\% credible interval of $\theta_i^{\ hier}$ crossing the funding line should be considered in a lottery instead of being directly accepted or rejected. 
 
 
 This model can be fitted using the \texttt{ERforResearch} package [@heyard_2026]. This implementation uses the \texttt{rjags}  [@rjags] framework in order to generate a \textsc{Mcmc} sample of the posterior distributions of $\theta_i^{\ hier}$. To fit the model, we will use both a reimplementation of this model in \texttt{rjags}, and a new implementation of this model using the Integrated Nested Laplace Approximation \textsc{Inla} framework using the \texttt{inla} package [@rue_approximate_2009]. More information on both these methods can be found in Annex \ref{mcmc} and Annex \ref{inla}. The \texttt{rjags} model was called with 10000 iterations of adaptive sampling, 10000 iteration of burn-in and 80000 iterations of sampling in combination with a thinning of 20. Convergence diagnostics of the \texttt{rjags} model are available in Annex \ref{coda-hier} and the model calls are available in Annex \ref{mod_calls}.
 
 
-Both fitting methods provide very similar posterior distribution for $\theta_i^{hier}$.  Figure \ref{fig:jags_inla_hier} shows the latent quality estimates for the ten best objects according to both the \texttt{rjags} fit and the \texttt{inla} fit. Both fits would suggest a lottery to allocate the funding to three of the four best objects: x17, x25, x19 and x21. The latent quality estimates for the ten best objects according to both these fits are provided in Table \ref{tab:hier_m}. Both model fits provide the same output; the largest discrepancy between the two fitting procedure is of a magnitude of $0.02$. However, the \texttt{inla} model does not require any convergence diagnostic and is thus faster to fit.  
+Both fitting methods provide very similar posterior distribution for $\theta_i^{hier}$.  Figure \ref{fig:jags_inla_hier} shows the latent quality estimates for the ten best objects according to both the \texttt{rjags} fit and the \texttt{inla} fit. Both fits would suggest a lottery to allocate the funding to three of the four best objects: x17, x25, x19 and x21. The latent quality estimates for the ten best objects according to both these fits are provided in Table \ref{tab:hier_m}. Both model fits provide the same output; the largest discrepancy between the two fitting procedure is of a magnitude of $0.01$. However, the \texttt{inla} model does not require as extensive convergence diagnostic as the \texttt{rjags} model and is thus faster to fit.  
 
 <!-- #### Hierarchical model for scores - results -->
 
@@ -496,7 +484,7 @@ Both fitting methods provide very similar posterior distribution for $\theta_i^{
     \includegraphics[width=0.9\linewidth]{figures/results/res_both_hier}
     \renewcommand{\baselinestretch}{1}
     \caption{Latent quality of the 10 best objects according to the Bayesian hierarchical model
-    for scores (lower values represent higher object qualities). \textbf{On the left:} The model fitted using \texttt{rjags}. \textbf{On the right:} The model fitted using \texttt{inla}. Both fitting methods yield very similar results.}
+    for scores (lower values represent higher object qualities). Credible intervals (CI) of the estimated object qualities are available in purple and grey. \textbf{On the left:} The model fitted using \texttt{rjags}. \textbf{On the right:} The model fitted using \texttt{inla}. Both fitting methods yield very similar results.}
     \label{fig:jags_inla_hier}
 \end{figure}
 
@@ -512,13 +500,13 @@ Both fitting methods provide very similar posterior distribution for $\theta_i^{
          x17 & x25 & x19 & x21 & x4\\
         \hline
         \textbf{$\hat{\theta}_i^{\ mean}$} (\texttt{rjags}) & 
-        -1.04 & -0.99 & -0.99 & -0.92 & -0.79 \\
+        -1.04 & -0.99 & -0.98 & -0.92 & -0.79 \\
         \textbf{$\hat{\theta}_i^{\ mean}$} (\textsc{Inla})& 
         -1.04 & -0.99 & -0.98 & -0.92 & -0.79 \\
         \hline
         $50\%$ {CI} (\texttt{rjags}) & \footnotesize
-        -1.15 to -0.93 & \footnotesize -1.11 to -0.88 & \footnotesize -1.10 to -0.87 & \footnotesize 
-        -1.03 to -0.80 & \footnotesize -0.90 to 0.69 \\
+        -1.15 to -0.92 & \footnotesize -1.11 to -0.87 & \footnotesize -1.10 to -0.86 & \footnotesize 
+        -1.04 to -0.80 & \footnotesize -0.91 to 0.67 \\
         $50\%$ {CI} (\textsc{Inla}) & \footnotesize
         -1.15 to -0.92 & \footnotesize -1.10 to -0.87 & \footnotesize -1.10 to -0.87 & \footnotesize -1.03 to -0.80 & \footnotesize
         -0.90 to -0.67 \\
@@ -527,20 +515,20 @@ Both fitting methods provide very similar posterior distribution for $\theta_i^{
         \textbf{Grant ID} & x23 & x22 & x20 & x6 & x3 \\
         \hline
         \textbf{$\hat{\theta}_i^{\ mean}$} (\texttt{rjags}) & 
-        -0.75 & -0.73 & -0.70 & -0.62 & -0.60 \\
+        -0.74 & -0.73 & -0.70 & -0.62 & -0.60 \\
         \textbf{$\hat{\theta}_i^{\ mean}$} (\textsc{Inla}) &
         -0.74 & -0.73 & -0.70 & -0.62 & -0.60 \\
         \hline
         $50\%$ {CI} (\texttt{rjags}) & \footnotesize
-        -0.86 to -0.63 & \footnotesize -0.85 to -0.61 & \footnotesize -0.81 to -0.58 & \footnotesize
-        -0.74 to -0.51 & \footnotesize -0.71 to -0.48 \\
+        -0.86 to -0.62 & \footnotesize -0.85 to -0.61 & \footnotesize -0.82 to -0.58 & \footnotesize
+        -0.74 to -0.50 & \footnotesize -0.71 to -0.48 \\
         $50\%$ {CI} (\textsc{Inla}) & \footnotesize
-        -0.86 to -0.62 & \footnotesize -0.85 to -0.61 & \footnotesize -0.81 to -0.58 & \footnotesize
+        -0.85 to -0.63 & \footnotesize -0.84 to -0.61 & \footnotesize -0.81 to -0.58 & \footnotesize
         -0.74 to -0.51 & \footnotesize -0.71 to -0.48 \\
         \hline
     \end{tabular}
     \renewcommand{\baselinestretch}{1}
-    \caption{Underlying quality estimates (posterior means ?? or median check) and $50\%$ credible intervals (CI) of the 10 best objects according to the hierarchical model for scores fitted with \texttt{rjags} and \texttt{inla}. Objects are sorted from best to worst according to the hierarchical model for scores.}
+    \caption{Underlying posterior means of the quality estimates and $50\%$ credible intervals (CI) of the 10 best objects according to the hierarchical model for scores fitted with \texttt{rjags} and \texttt{inla}. Objects are sorted from best to worst according to the hierarchical model for scores.}
     \label{tab:hier_m}
 \end{table}
 
@@ -751,9 +739,7 @@ Combining the Binomial model with the Mallows model provides the following proba
 \pi = [\pi_1, ..., \pi_n], \quad R^* = \text{Order}(\pi), \quad \eta > 0
 \end{gather*}
 
-This model incorporates up to $n + 1$ joint observations per assessor, with up to $n$ scoring observations and $1$ ranking observation. It jointly models the ranking and the scoring data by assuming the underlying ranking order $R^*$ is dependent on the ordering of $\pi$. Using this method we assume the final ordering of the objects is $\hat{R}^{*\ mbin}$. In this thesis, we fit the Mallows-Binomial model using an \texttt{R} implementation by Pearce [-@rankrate]. This implementation also includes a bootstrapped uncertainty estimate, which we provide in the results below.
-
-?? add a description of how bootstrap works in this estimation
+This model incorporates up to $n + 1$ joint observations per assessor, with up to $n$ scoring observations and $1$ ranking observation. It jointly models the ranking and the scoring data by assuming the underlying ranking order $R^*$ is dependent on the ordering of $\pi$. Using this method we assume the final ordering of the objects is $\hat{R}^{*\ mbin}$. In this thesis, we fit the Mallows-Binomial model using an \texttt{R} implementation by Pearce [-@rankrate]. This implementation also includes a nonparametric bootstrapped uncertainty estimate, from which we provide in the results below (see Efron, B. [-@efron_bootstrap_1979] for more information on nonparametric bootstrapping).
 
 The Mallows-Binomial model provides an estimate of the true underlying ranking $\hat{R}^{*\ mbin}$ from both the scoring data and the ranking data.  This model would accept the objects x17, x25 and x19. The ranking estimates are provided in Table \ref{tab:mbin}.
 
@@ -806,8 +792,8 @@ The Mallows-Binomial model provides an estimate of the true underlying ranking $
 
 We define a joint hierarchical model which combines scoring and ranking data in order to calculate the latent quality of objects. This model requires a transformation of the data in order to unify the scale of the scoring and ranking. To achieve this, we perform standardisation through z-scoring as follows:
 \begin{gather}
-y^{z}_{i,j} = \frac{y_{i,j} - \hat{\bar{y}}}{\hat{\sigma_y}} \\
-r^{z}_{i,j} = \frac{r_{i,j} - \hat{\bar{r}}}{\hat{\sigma_r}}
+y^{z}_{i,j} = \frac{y_{ij} - \hat{\bar{y}}}{\hat{\sigma_y}} \\
+r^{z}_{i,j} = \frac{r_{ij} - \hat{\bar{r}}}{\hat{\sigma_r}}
 \end{gather}
 Using the standardised $y^{z}_{i,j}$ and $r^{z}_{i,j}$ we slightly modify the hierarchical model for scores defined in section ?? and join it with a model for the ranking data using the same principles. This creates the following joint model with correlated random effects:
 \begin{gather}
@@ -895,12 +881,10 @@ The results of the comparison of model performance using z-scoring can be found 
 \renewcommand{\baselinestretch}{1}
 
 
-?? Fix plot alpha
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/results/res_z_score_finalordering.png}
-    \caption{Plot of final ordering by model with jitter: The objects can be found on the x axis, the rank position in the final ordering can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black. The models solely taking the ranking data into account only provide a final ordering on the objects that have obtained at minimum one rank (11 first objects).}
+    \caption{Plot of final ordering by model with jitter: The objects can be found on the x axis, the rank position in the final ordering can be found on the y-axis. The order of the objects was determined by the final ordering of the Mallows-Binomial model. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black. The models solely taking the ranking data into account only provide a final ordering on the objects that have obtained at minimum one rank (11 first objects).}
     \label{fig:ford}
 \end{figure}
 
@@ -910,7 +894,7 @@ The results of the comparison of model performance using z-scoring can be found 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/results/res_z_score_top10s.png}
-    \caption{Plot of z-scores of the 10 best objects by model with jitter: The objects can be found on the x axis, the z-score can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black.}
+    \caption{Plot of z-scores of the 10 best objects according to the Mallows-binomial model: The objects can be found on the x axis, the z-score of can be found on the y axis. Jitter in both the x and y direction was added for readibality. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black.}
     \label{fig:zscore}
 \end{figure}
 
@@ -1277,7 +1261,7 @@ The last diagnostic we use in this thesis is the Raftery and Lewis diagnostic [@
 
 ## Integrated Nested Laplace Approximation {#inla}
 
-The Integrated Nested Laplace Approximation (\textsc{Inla}) is a method to approximate posterior distributions based on the Laplace approximation. It uses the approximation multiple times, in nested iterations, to obtain the marginal posterior distribution of the parameters of a latent Gaussian model. While the full and exact construct of INLA is beyond the scope of this thesis, we offer here a short introduction to the Laplace approximation.   
+The Integrated Nested Laplace Approximation (\textsc{Inla}) is a method to approximate posterior distributions based on the Laplace approximation. It uses the approximation multiple times, in nested iterations, to obtain the marginal posterior distribution of the parameters of a latent Gaussian model. A thorough description and motivation of the \textsc{Inla} method is available in the original paper by Rue et al. [-@rue_approximate_2009]. An extension of this method enabling joint modelling is available in Rustand et al. [-@rustand_fast_2024 ; -@rustand_bayesian_2026]. While describing the full construct of INLA is beyond the scope of this thesis, we offer here a short introduction to the Laplace approximation.
 
 ### Laplace approximation
 
@@ -1403,7 +1387,7 @@ l(\symbf{\theta}, \symbf{\Sigma} | R) = \sum_{j=1}^m \log(\mathbb{P}[R_j | \symb
 
 ## Convergence Diagnostics in the Hierarchical Model for Scores  {#coda-hier}
 
-Convergence diagnostics were performed using the CODA package [@coda]. The posterior distribution of all parameters converged with $\hat{R} = 1$ point estimates and a multivariate potential scale reduction factors of $1$. This indicates very good convergence [@brooks_general_1998]. The autocorrelation factors of all parameters dropped below $0.05$ after a lag of six iterations (see Figures \ref{fig:acf_1} for a selection of autocorrelation factor plots). The thinning parameter of 20 used in the fit therefore seems appropriate. No trace plot showed any sign of abnormal behavior across the four \textsc{Mcmc} chains (see Figures \ref{fig:coda_1} and \ref{fig:coda_2} for a selection of trace plots). The Raftery and Lewis diagnostic [@raftery_1970] suggests a minimum of 3746 iterations for a 95\% probability of achieving an accuracy of 0.005 in the estimation of the 2.5\% quantile. Our model was fitted using 80000 iteration and with a thinning parameter of 20, we therefore consider the number of iteration sufficient. We also tested for the stationarity of the posterior distributions of all parameters on all four chains using Heidelberger's convergence diagnostic [@heidelberger_simulation_1983]. All parameter's estimated by the model passed the test. Due to the model passing all these tests, and visually showing satisfactory properties in the trace plots, we assume the model successfully converged.
+Convergence diagnostics were performed using the CODA package [@coda]. The posterior distribution of all parameters converged with $\hat{R} = 1$ point estimates and a multivariate potential scale reduction factors of $1$. This indicates very good convergence [@brooks_general_1998]. The autocorrelation factors of all parameters dropped below $0.05$ after a lag of 20 iterations (see Figure \ref{fig:acf_1} for a selection of autocorrelation factor plots). The thinning parameter of 20 used in the fit therefore seems appropriate. No trace plot showed any sign of abnormal behavior across the four \textsc{Mcmc} chains (see Figures \ref{fig:coda_1} and \ref{fig:coda_2} for a selection of trace plots). The Raftery and Lewis diagnostic [@raftery_1970] suggests a minimum of 3746 iterations for a 95\% probability of achieving an accuracy of 0.005 in the estimation of the 2.5\% quantile. Our model was fitted using 80000 iteration and with a thinning parameter of 20, we therefore consider the number of iteration sufficient. We also tested for the stationarity of the posterior distributions of all parameters on all four chains using Heidelberger's convergence diagnostic [@heidelberger_simulation_1983]. All parameter's estimated by the model passed the test. Due to the model passing all these tests, and visually showing satisfactory properties in the trace plots, we assume the model successfully converged.
 
 
 \renewcommand{\baselinestretch}{1}
@@ -1412,7 +1396,7 @@ Convergence diagnostics were performed using the CODA package [@coda]. The poste
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/coda_fig/acf_worse_case}
-    \caption{Autocorrelation factor of the most autocorrelated parameters estimated using the \texttt{rjags} implementation of the hierarchical model.}
+    \caption{Autocorrelation factor of a selection of parameters estimated using the \texttt{rjags} implementation of the hierarchical model.}
     \label{fig:acf_1}
 \end{figure}
 
@@ -1481,11 +1465,11 @@ Convergence diagnostics were performed using the CODA package [@coda]. The poste
 <!-- \end{figure} -->
 
 
-## Model Calls for JAGS and INLA
+## Model Calls and Priors in the Hierarchical Model for Score
 
 \label{mod_calls}
 
-In this section we provide the models called in JAGS and INLA of the Bayesian hierarchical models for scores.
+In this section we provide the models called in the JAGS and INLA implementations of the Bayesian hierarchical models for scores. Plots of the hyperpriors used in these models are also available in this section in Figure \ref{fig:priors}. Finally, an overview of the main properties of these hyperpriors is available in Table \ref{tab:prior}.
 
 ```{R}
 #| echo: true
@@ -1497,35 +1481,39 @@ In this section we provide the models called in JAGS and INLA of the Bayesian hi
 model_string <- '
   model  {
   
-  # Likelihood -------------------------------------------------------------
+  # Likelihood ---------------------------------------------------------------
+  
     for (i in 1:n){
-      score[i] ~ dnorm(mu[i], tau_general)
+      score[i] ~ dnorm(mu[i], tau_g)
       mu[i] <- overall_m + id_quality[object_id[i]] + ass_effect[assessor[i]]
     }
   
-  # Priors for id and ass effect -------------------------------------------
+  # Priors for id and ass effect ----------------------------------------------
+  
     for(j in 1:n_object){
-      id_quality[j] ~ dnorm (0, tau_object)
+      id_quality[j] ~ dnorm (0, tau_o)
     }
+    
     for(k in 1:n_assessor){
       ass_effect[k] ~ dnorm(0, tau_ass)
     }
   
-  # Prior for overall_m (low information) ----------------------------------
+  
+  # Prior for overall_m  ------------------------------------------------------
+  
     overall_m ~ dnorm(0, 10^(-3))
     
-  # Hyperpriors ------------------------------------------------------------
-    sigma_g ~ dgamma(1.5,1.5)
-    tau_general <- 1 / (sigma_g^2) # Matched with Inla Priors
-    
-    sigma_o ~ dgamma(1.5,1.5)
-    tau_object <- 1 / (sigma_o^2) #  Matched with Inla Priors
+  # Hyperpriors ---------------------------------------------------------------
   
-    sigma_ass ~ dgamma(1.5,1.5)
-    tau_ass <- 1 / (sigma_ass^2) #  Matched with Inla Priors
-    
+    tau_g ~ dgamma(1,0.1) # This precision is high as model very flexible
+
+    tau_o ~ dgamma(1,1) # matched with inla prior
+
+    tau_ass ~ dgamma(1,1) # matched with inla prior
+
   }
 '
+
 # Model defintion
 model <- jags.model(textConnection(model_string),
                     data = jags_dat,
@@ -1540,40 +1528,76 @@ fit <- coda.samples(model = model,
                     variable.names = c("overall_m",
                                        "id_quality",
                                        "ass_effect",
-                                       "sigma_g", "sigma_o", "sigma_ass"),
+                                       "tau_g", "tau_o", "tau_ass"),
                     n.iter = 80000,
                     thin = 20)
 
 ### INLA call #############################################################
 
+# Setting prior for random effects
 # According to INLA documentation "loggamma" is the gamma prior
-prec.prior <- list(prec = list(prior = "loggamma", param = c(1.5, 1.5)))
+prec.prior <- list(prec = list(prior = "loggamma", param = c(1, 1)))
+
 
 # Model call
 fit_inla <- 
-  inla(formula = value ~ 1 + 
-                 f(grant_id, model = "iid", hyper = prec.prior) +
+  inla(formula = value ~ 1 + f(grant_id, model = "iid", hyper = prec.prior) +
                  f(RandomRevID, model = "iid", hyper = prec.prior), 
-       data = dat, quantiles = c(0.25,0.75))
+                 data = dat, quantiles = c(0.25,0.75),
+                 # Setting intercept prior
+                 control.fixed = 
+                    list(mean.intercept = 0, prec.intercept = 10^(-3)),
+                 # Setting error term prior 
+                 family = "gaussian",
+                 control.family = list(
+                   hyper = list(
+                     prec = list(prior = "loggamma", param = c(1, 0.1))))
+       )
+
 ```
-
-
-## z-scoring on Entire Dataset
-\label{z-full}
-
-Figure \ref{fig:zscore_whole} provides an overview of the z-scores of all objects. This graph is to be interpreted with great caution. Despite the ranking models seemingly distinguishing the best 11 proposals better from one another than the scoring models, in reality it is not the case. Due to the fact that the data we use only provides partial ranking, the z-scoring on the ranking models only take the best 11 objects into account in the standardisation process. This artificially inflates the difference in quality between the objects when compared to the models which take all objects into account for the standardisation. 
 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/results/res_z_score_all.png}
-    \caption{Plot of z-scores by model with jitter: The objects can be found on the x-axis, the z-scores can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black. The models exclusively taking the ranking data into account only provide a final ordering on the objects that have obtained at minimum one rank (11 first objects)·}
-    \label{fig:zscore_whole}
+    \includegraphics[width=0.9\linewidth]{figures/coda_fig/prior_distributions}
+    \caption{Visualisation of the hyperpriors used in the hierarchical model for scores. The precision priors provide plausible values for the precision of the random effects and intercepts. The intercept prior is uninformative. All three priors were selected out of conveniance, as they are straightforward to implement.}
+    \label{fig:priors}
 \end{figure}
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|c|c}
+        \hline
+        \textbf{prior} & \textbf{25\% quantile} & \textbf{mean} & \textbf{75\% quantile}\\
+        \hline
+         precision for the random effects & 0.29  & 1 & 1.39 \\
+         precision for the error term & 2.88 & 10 & 13.86\\
+         Intercept & -674.5 & 0  & 674.5 \\
+    \end{tabular}
+    \caption{Simple description of the priors used in the hierarchical model}
+    \label{tab:prior}
+\end{table}
+
+
+<!-- ## z-scoring on Entire Dataset -->
+<!-- \label{z-full} -->
+
+<!-- Figure \ref{fig:zscore_whole} provides an overview of the z-scores of all objects. This graph is to be interpreted with great caution. Despite the ranking models seemingly distinguishing the best 11 proposals better from one another than the scoring models, in reality it is not the case. Due to the fact that the data we use only provides partial ranking, the z-scoring on the ranking models only take the best 11 objects into account in the standardisation process. This artificially inflates the difference in quality between the objects when compared to the models which take all objects into account for the standardisation.  -->
+
+
+<!-- \begin{figure}[H] -->
+<!--     \centering -->
+<!--     \includegraphics[width=0.9\linewidth]{figures/results/res_z_score_all.png} -->
+<!--     \caption{Plot of z-scores by model with jitter: The objects can be found on the x-axis, the z-scores can be found on the y-axis. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black. The models exclusively taking the ranking data into account only provide a final ordering on the objects that have obtained at minimum one rank (11 first objects)·} -->
+<!--     \label{fig:zscore_whole} -->
+<!-- \end{figure} -->
 
 
 
 ## Code Availability
+
+?? Add link to INLA joint
 
 All code used in order to write this report, analyse data, and generate figures in this thesis is available on github under the following link:  [https://github.com/cchipmunk/MaTh-funding-rank-score](https://github.com/cchipmunk/MaTh-funding-rank-score)
 
@@ -1615,7 +1639,7 @@ The score I define here is theoretically the set of scores for all the data set 
 
 \
 
-**Scoring data** $\mathbf{\mathbf{D_S} = (S_1, ..., S_n) \ \epsilon \ \mathcal{S}(\mathcal{A})}$ are an aggregation of the scores given by the $m$ assessors. The score given to a specific alternative $p_i$ by a specific assessor $j$ will be written $y_{i,j}$ with $i \ \epsilon \  \{1,...,n\}$ and $j \ \epsilon \ \{1, ..., m\}$.
+**Scoring data** $\mathbf{\mathbf{D_S} = (S_1, ..., S_n) \ \epsilon \ \mathcal{S}(\mathcal{A})}$ are an aggregation of the scores given by the $m$ assessors. The score given to a specific alternative $p_i$ by a specific assessor $j$ will be written $y_{ij}$ with $i \ \epsilon \  \{1,...,n\}$ and $j \ \epsilon \ \{1, ..., m\}$.
 
 \
 

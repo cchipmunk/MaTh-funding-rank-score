@@ -46,7 +46,7 @@ accepted <- c(rep("Accepted", 3), rep("Rejected", 7))
 make_plot_pop(estimate = estimate, names = names,
               model_name = "the mean scores model",
               accepted = accepted,
-              y_lims = c(min(estimate*1.2), max(estimate*0.8)))
+              y_lims = c(min(estimate*1.2), max(estimate*0.7)))
 
 # Results for table
 pander(final_dat)

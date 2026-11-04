@@ -1,24 +1,26 @@
-var_samples <- rgamma(100000, shape = 1.5, rate = 1.5)
 
-hist(var_samples)
+# Plotting the three prior distributions
 
-summary(var_samples)
-
-options(scipen = 99)
-
-
-prec_samples <- 1/ (var_samples)
-
-hist(prec_samples)
-
-summary(prec_samples)
+curve(dgamma(x, shape = 1, rate = 1), from = 0, to = 5, 
+      main = "Precision prior for the random effects",
+      ylab = "Probability density")
 
 
+curve(dgamma(x, shape = 1, rate = 0.1), from = 0, to = 5, 
+      main = "Precision prior for the error term",
+      ylab = "Probability density")
 
-inla_prec_samples <- rgamma(100000, shape = 1.5, rate = 1.5)
 
-inla_var_samples <- 1 / inla_prec_samples
+curve(dnorm(x, mean = 0, sd = 1000), from = -5000, to = 5000, 
+      main = "Prior for the intercept",
+      ylab = "Probability density")
 
 
-hist(inla_var_samples)
-summary(inla_var_samples)
+summary(rgamma(1000000, shape =1, rate =1))
+sd(rgamma(1000000, shape =1, rate =1))
+
+summary(rgamma(10000000, shape =1, rate =0.1))
+
+summary(rnorm(10000000000, mean = 0, sd = 1000))
+
+qnorm(.75, mean = 0, sd = 1000)

@@ -1,6 +1,7 @@
 library(rjags)
 library(pander)
 library(coda)
+library(grid)
 library(gridExtra)
 library(ggplot2)
 library(ggnewscale)
@@ -35,14 +36,14 @@ model_string <- '
   # Likelihood ---------------------------------------------------------------
   
     for (i in 1:n){
-      score[i] ~ dnorm(mu[i], tau_general)
+      score[i] ~ dnorm(mu[i], tau_g)
       mu[i] <- overall_m + id_quality[object_id[i]] + ass_effect[assessor[i]]
     }
   
   # Priors for id and ass effect ----------------------------------------------
   
     for(j in 1:n_object){
-      id_quality[j] ~ dnorm (0, tau_object)
+      id_quality[j] ~ dnorm (0, tau_o)
     }
     
     for(k in 1:n_assessor){
@@ -56,15 +57,12 @@ model_string <- '
     
   # Hyperpriors ------------------------------------------------------------
   
-    sigma_g ~ dgamma(1.5,1.5)
-    tau_general <- 1 / (sigma_g^2) # Maximal uninformative
-    
-    sigma_o ~ dgamma(1.5,1.5)
-    tau_object <- 1 / (sigma_o^2) # To fit with INLA model
-  
-    sigma_ass ~ dgamma(1.5,1.5)
-    tau_ass <- 1 / (sigma_ass^2) # To fit with INLA model
-    
+    tau_g ~ dgamma(1,0.1) # We believe this precision to be high as model is quite flexible
+
+    tau_o ~ dgamma(1,1) # matched with inla prior
+
+    tau_ass ~ dgamma(1,1) # matched with inla prior
+
   }
 
 '
@@ -100,7 +98,7 @@ fit <- coda.samples(model = model,
                     variable.names = c("overall_m",
                                        "id_quality",
                                        "ass_effect",
-                                       "sigma_g", "sigma_o", "sigma_ass"),
+                                       "tau_g", "tau_o", "tau_ass"),
                     n.iter = 80000,
                     thin = 20)
 
@@ -119,14 +117,14 @@ m.fit <- as.matrix(fit)
 
 # Checking Autocorrelation 
 col_ns <- paste0("id_quality[",1:28,"]")
-col_ns <- c(col_ns, paste0("ass_effect[",1:10,"]"), "overall_m", "sigma_ass", "sigma_g", "sigma_o")
+col_ns <- c(col_ns, paste0("ass_effect[",1:10,"]"), "overall_m", "tau_ass", "tau_g", "tau_o")
 
-# For thesis figure run this code instead of full autocorrelation check
-# col_ns <- c("id_quality[1]", "id_quality[10]", "overall_m")
+#For thesis figure run this code instead of full autocorrelation check
+col_ns <- c("id_quality[1]", "overall_m", "tau_o")
 
 for (i in col_ns) {
   sim <- m.fit[,i] 
-  acf(sim, main = i, lag.max = 10, ylim = c(0, 0.1), ci = 0)
+  acf(sim, main = i, lag.max =25, ylim = c(-0.05,1), ci = 0)
 } 
 
 
@@ -136,6 +134,7 @@ raftery.diag(fit)
 
 heidel.diag(fit)
 
+plot(1,1)
 
 #
 ### Extracting outputs ------------------------------------------------------------
@@ -181,9 +180,8 @@ p1
 
 
 # removing legend from p1 and changing titles
-# p1 <- p1 + theme(legend.position="none") + ggtitle("JAGS fit")
-# p2 <- p2 + ggtitle("INLA fit")
-# grid.arrange(p1, p2, widths = c(1.6,2), 
-#               top = textGrob(
-#                 "Object qualities according to the Bayesian hierarchical model for scores", gp=gpar(fontsize=18)))
-# 
+p1 <- p1 + theme(legend.position="none") + ggtitle("JAGS fit")
+p2 <- p2 + ggtitle("INLA fit")
+grid.arrange(p1, p2, widths = c(1.6,2),
+              top = textGrob(
+                "Object qualities according to the Bayesian hierarchical model for scores", gp=gpar(fontsize=18)))

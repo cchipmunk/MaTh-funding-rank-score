@@ -169,19 +169,41 @@ dat_joint$value_rank <- rep(NA, 280)
 dat_joint$value_rank[dat_joint$RandomRevID %in% unique(dat_ranks$RandomRevID)] <-
   dat_ranks$value
 
-dat_joint <- dat_joint[complete.cases(dat_joint),]
+# Adding rank 7 or greater
+dat_joint$value_rank[is.na(dat_joint$value_rank)] <- 7
+
+# Number of objects
+obj_n <- length(unique(dat_joint$grant_id))
+
+#Initiating mean and mean
+mean_score <- rep(NA, obj_n)
+mean_rank <- rep(NA, obj_n)
+
+# mean calculated only on the ranks <= than 7
+for (i in 1:obj_n) {
+  mean_score[i] <- mean(dat_joint$value[dat_joint$grant_id == unique(dat_joint$grant_id)[i]], na.rm = T)
+  mean_rank[i] <- mean(dat_joint$value_rank[dat_joint$grant_id == unique(dat_joint$grant_id)[i] & dat_joint$value_rank <= 6], na.rm = T)  
+}
+
+mean_score
+mean_rank
+
+plot(mean_score, mean_rank, ylim = c(1, 6), xlim = c(1.4,2), col = "darkseagreen",
+     lwd = 2, ylab = "Mean rank", xlab = "Mean score", main = "Comparison of scores and
+     ranks in object present in at least one ranking")
+
+legend("topleft", legend = "objects", col = "darkseagreen", pch = 1, pt.lwd = 2)
 
 
-jitter_amount <- 0.001
 
-ggplot(dat_joint) +
-  geom_jitter( aes(x=value, y= as.numeric(value_rank), colour = "Datapoints"), alpha = 0.6, 
-               height = jitter_amount, size = 3) +
-  scale_colour_manual(name = "Values", values = c("Datapoints" = "darkseagreen")) +
-  scale_y_continuous(name = "Rank given to object") +
-  xlab("Score given to object") +
-  ggtitle("Agreement between ranks and scores") +
-  theme_bw() 
+# Code to check for exchanges between scoring and ranking order
+
+# dat_joint <- dat_joint[complete.cases(dat_joint),]
+# 
+# length(unique(dat_joint$RandomRevID)  )
+
+# No exchange between scoring and ranking:  I
+# Exchange between scoring and ranking:     IIIII III
 
 
-cor(dat_joint$value, dat_joint$value_rank)
+
