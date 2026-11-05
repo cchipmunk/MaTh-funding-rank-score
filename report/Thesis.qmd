@@ -65,9 +65,9 @@ freeze: auto
 \thispagestyle{empty}
 
 
-\LARGE\textbf{Towards Bayesian joint modelling of ranks and scores} \\
+\LARGE\textbf{Towards Bayesian Joint Modelling of Ranks and Scores} \\
 \vspace{0.2cm}
-\LARGE\textbf{in the assessment of grant proposal quality} 
+\LARGE\textbf{in the Assessment of Grant Proposal Quality} 
 
 
 \vspace{1cm}
@@ -103,7 +103,7 @@ freeze: auto
 # Acknowledgements {.unnumbered}
 \pagenumbering{roman}
 
-TODO
+I thank my supervisor Dr. Rachel Heyard, for her guidance, support and patience during the whole master's thesis. I thank PD Dr. Malgorzata Roos, for being not just a supervisor in this thesis, but also a mentor during my whole studies in biostatistics. I am very grateful for all the meetings, discussion, and support I got from Malgorzata, as she patiently introduced me both to the technical intricacies of Bayesian statistics, and also to the general concepts of the world of academia. I would also like to thank the staff of the UZH Biostatistics department as a whole for investing so much energy and care into teaching. In particular, I would like to thank Prof. Dr. Torsten Hothorn and Prof. Dr. Leonard Held for shaping my perception of statistics. Finally, I would like to thank Léona Dörries, for her help in reviewing and editing this thesis.
 
 \newpage
 
@@ -976,13 +976,8 @@ The results of the comparison of model performance using z-scoring can be found 
 
 # Discussion
 
-?? Add INLA joint description
-
 In this thesis, we provide accessible definitions of ranking data and scoring data. We put these definitions into context and present six different models, both frequentist and Bayesian, that can be used to analyse such data. These models are explained in great detail, with both mathematically formal and plain text definitions. We fit these models to a real-world dataset and provide their results, which we compare and discuss. We also provide reproducible code for all  models, which can be used to analyse further data of the same type. All of this information provides a solid foundation for further research in analysing ranking and scoring data in the context of grant proposal quality assessment.
 
-<!-- Finally, we provide three potential paths towards joint modelling of scoring and ranking data. -->
-
-<!-- We find that, depending on the model selected, certain object traits may be favoured or disadvantaged in the assessment of quality.  -->
 
 ## A Comparison of Models
 
@@ -1006,7 +1001,7 @@ The ranking data and scoring data, while both attempting to assess the quality o
 
 We present in this thesis how the Mallows-Binomial model already combines scoring and ranking data [@pearce_unified_2022]. However, we also show that this model, while incorporating both data types, lends more importance to scoring data than ranking data. In order to create a model that considers both sources of information as equal, one could consider modifying the likelihood function of the Mallows-Binomial model to a weighted likelihood [@markatou_weighted_1998]. The weight of the ranking observations could then be increased and the weights of the scoring observations decreased. This would jointly model ranking and scoring data, without favouring any data type.
 
-A second approach to joint modelling would be to create a hierarchical model in \textsc{Inla}, containing both a scoring and a ranking component with correlated random effects. A framework to integrate this in \texttt{R} already exists: the \texttt{inlajoint} package by Rustand et al. [-@rustand_fast_2024]. However, \textsc{Inla} can only fit models which are latent Gaussian. An implementation in this framework would require either a latent Gaussian model for ranking data, which to our knowledge does not exist, or a transformation of the ranking data into a scale which could then be used in a latent Gaussian model. This transformation could consist in using ranks as scores, which is a polarising subject in literature [@stevens_theory_1946; @mosteller_data_1977; @velleman_nominal_1993], or could consist in directly using the results of a Plackett-Luce, or Thurstonian model as target variable in a Gaussian model. Using one of these options would enable us to jointly model ranking and scoring data, albeit with an additional transformation step.
+A second approach to joint modelling would be to create a hierarchical model in \textsc{Inla}, containing both a scoring and a ranking component with correlated random effects. A framework to integrate this in \texttt{R} already exists: the \texttt{Inlajoint} package by Rustand et al. [-@rustand_fast_2024]. However, \textsc{Inla} can only fit models which are latent Gaussian. An implementation in this framework would require either a latent Gaussian model for ranking data, which to our knowledge does not exist, or a transformation of the ranking data into a scale which could then be used in a latent Gaussian model. This transformation could consist in using ranks as scores, which is a polarising subject in literature [@stevens_theory_1946; @mosteller_data_1977; @velleman_nominal_1993], or could consist in directly using the results of a Plackett-Luce, or Thurstonian model as target variable in a Gaussian model. Using one of these options would enable us to jointly model ranking and scoring data, albeit with an additional transformation step. During the course of this thesis, we created an early-stage implementation of such a model. Due to time constraints, we did not manage to refine the model enough to add it to the main part of this report. However, we still make this preliminary work available as a thesis supplement.
 
 A third approach to joint modelling is to use the ranking data to create priors for latent quality variables, which can then be used in the Bayesian hierarchical model for scores. The priors could be created from a generalised normal Thurstonian model, as defined in Annex \ref{lik:thurst}. Unfortunately, no closed form formulation of the likelihood of of the generalised normal Thurstonian model exists, so an \textsc{Mcmc} simulation would be necessary to estimate these distributions. A Gibbs sampling algorithm to estimate such distributions using a Thurstonian model on ranking data is already available in Yao and Böckenholft [-@yao_bayesian_1999]. The \textsc{Mcmc} algorithm and the Bayesian hierarchical model for scores could thus be run sequentially in order to obtain a joint model. 
 
@@ -1575,7 +1570,7 @@ fit_inla <-
          precision for the error term & 2.88 & 10 & 13.86\\
          Intercept & -674.5 & 0  & 674.5 \\
     \end{tabular}
-    \caption{Simple description of the priors used in the hierarchical model}
+    \caption{Description of the priors used in the hierarchical model}
     \label{tab:prior}
 \end{table}
 
@@ -1597,9 +1592,7 @@ fit_inla <-
 
 ## Code Availability
 
-?? Add link to INLA joint
-
-All code used in order to write this report, analyse data, and generate figures in this thesis is available on github under the following link:  [https://github.com/cchipmunk/MaTh-funding-rank-score](https://github.com/cchipmunk/MaTh-funding-rank-score)
+All code used in order to write this report, analyse data, and generate figures in this thesis and its supplement are available on github under the following link:  [https://github.com/cchipmunk/MaTh-funding-rank-score](https://github.com/cchipmunk/MaTh-funding-rank-score)
 
 
 ## Use of AI Declaration

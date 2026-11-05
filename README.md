@@ -45,7 +45,7 @@ required in order to reproduce the documents generated in this project.
 # Listing required packages
 required_packages <- c("reshape2", "pander", "dplyr", "rankrate", "data.table",
                         "psych", "ggplot2", "ggnewscale", "rjags", "coda",
-                        "gridExtra", "RColorBrewer", "grid")
+                        "gridExtra", "RColorBrewer", "grid", "kableExtra")
 
 # Installs all packages
 install.packages(required_packages)
