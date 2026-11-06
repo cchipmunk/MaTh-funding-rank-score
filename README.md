@@ -1,5 +1,7 @@
 # Towards Bayesian joint modelling of ranks and scores in the assessment of grant proposal quality
 
+**STA495: Master Thesis in Biostatistics**
+
 **Student:** Alvin Samuel Walker
 
 **Supervision:** Dr. Rachel Heyard, PD Dr. Malgorzata Roos
@@ -15,22 +17,23 @@ This repository contains the code, figures and report made for the STA495 module
 
 The documents included in this repository are:
 
-- Compiled version of the report, presentation and project plan.
-- Quarto file containing the final report and figures.
+- Compiled version of the report, supplement, presentations and project plan.
+- Quarto file containing the report and figures.
+- Quarto file containing the supplement.
 - Quarto file of presentations.
-- Code containing all analyses and generation of figures sorted by model.
+- Code containing all analyses, and code used for the generation of figures sorted by model.
 
 ## Instruction for use:
 
 1. Access to report
-- All compiled documents are available in their compiled folder.
+- All compiled documents are available in their respective folders.
 
 2. Reproducibility
-- The code is written in R, and the report in LaTeX. An installation of both these programming languages is
+- The code is written in R, and the report in \LaTeX. An installation of both these programming languages is
 required in order to reproduce the documents generated in this project.
-- All documents can be run from their location in the directory directly
-(if a document does not compile try setting working directory to the file location).
-- Packages used and an installation guide can be found in the section below.
+- All documents can be run from their location in the directory.
+(if a document does not compile try setting the working directory to the file location).
+- Packages used and an installation guide for these packages can be found in the section below.
 
 ## Package installation
 
@@ -38,8 +41,9 @@ required in order to reproduce the documents generated in this project.
 
 - To install INLA, an install.packages() call with a special repository can be used.
 
-- To install rjags, an installation of JAGS is necessary, please follow the instructions on the [JAGS website](https://mcmc-jags.sourceforge.io/)
+- To install rjags, an installation of JAGS is necessary, please follow the instructions on the [JAGS website](https://mcmc-jags.sourceforge.io/).
 
+- To install R packages from CRAN, run the following code in R.
 
 ```r
 # Listing required packages

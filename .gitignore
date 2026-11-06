@@ -1,0 +1,45 @@
+# Data
+
+
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RDataTmp
+
+# User-specific files
+.Ruserdata
+
+# RStudio files
+.Rproj.user/
+*.Rproj
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Output files
+*/report/*.pdf
+*.html
+*.log
+*.tex
+*.jpeg
+*.bbl
+*.bcf
+*.nav
+*.xml
+*.snm
+*.synctex.gz
+*.toc
+
+# R Environment Variables
+.Renviron
+
+# Quarto folder
+*/Thesis_files/
+
+
+.Rproj.user
+.positai
