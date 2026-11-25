@@ -1,0 +1,930 @@
+\documentclass[aspectratio=169,onlytextwidth,english]{beamer}
+% \documentclass[onlytextwidth,english]{beamer}
+
+% use official beamer theme from uzh
+\usetheme[english]{uzh} 
+
+%% load relevant packages:
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage[english]{babel}
+\usepackage{pgfpages}           % necessary for the handouts production
+\usepackage{amsmath}            % for nice mathematics
+\usepackage{verbatim}           % for verbatim output
+\usepackage{wasysym}            % symbols (smilies etc.)
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{graphicx}
+\usepackage{dsfont}
+\usepackage[dvipsnames]{xcolor} % for the color names, see: http://en.wikibooks.org/wiki/LaTeX/Colors#Predefined_
+
+\usepackage[backend=biber, backref=true, style=apa]{biblatex}
+\addbibresource{bib_presentation.bib}
+\AtBeginBibliography{\footnotesize}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{threeparttable}
+\usepackage{wrapfig}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{hyperref}
+
+\usepackage{setspace} 
+
+\hypersetup{%
+    hyperindex=true,
+    colorlinks=true,%
+    urlcolor = {uzh@blue},% in theme uzh
+    citecolor = {uzh@blue},
+    urlcolor = {uzh@berry},
+    pdfstartview=Fit,%
+    pdfpagelayout=SinglePage,%
+    pdfpagemode=UseThumbs
+  }%
+\usepackage{url}
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\ProcessOptionsBeamer
+
+%% define slidetitle color
+\setbeamercolor{title}{fg=uzh@blue}
+\setbeamercolor{frametitle}{fg=uzh@blue}
+
+
+\title{Towards Bayesian joint modelling of ranks and scores in the assessment 
+of grant proposal quality}
+
+%% The following are all optional, simply comment them
+%\subtitle{Subtitle (optional)}
+\institute{Master Program in Biostatistics www.biostat.uzh.ch\\ STA495: Master Thesis}  %% optional
+\author{Alvin Walker, supervision: Dr. Rachel Heyard \& PD Dr. Malgorzata Roos}
+\date{\today}
+\titlegraphic{img/uzh-lake.jpg}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+<<knitr_settings, include=FALSE,purl=FALSE>>=
+library(knitr)
+opts_chunk$set(
+fig.path='figures/', fig.show='hold', fig.height=3.9)
+@
+
+% Important for bibliography
+<<setup_00, eval= TRUE, include= FALSE, cache= FALSE, echo= FALSE>>=
+system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
+@
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}{Presentation outline}
+
+\begin{enumerate}
+
+\item \textbf{Context}
+\begin{itemize}
+\item Grant funding allocation
+\item Scoring and Ranking data
+\item Thesis objectives
+\end{itemize}
+
+\item \textbf{Methods}
+\begin{itemize}
+\item Data
+\item Modelling
+\end{itemize}
+
+\item \textbf{Results \& Discussion}
+\begin{itemize}
+\item Comparison of models
+\item Joint modelling
+\end{itemize}
+
+\item \textbf{Outlook}
+
+\end{enumerate}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}{System for grant funding allocation}
+
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.25]{figures/grant_process/num_1.png}
+     \centering
+\end{figure}
+
+%%%
+
+\end{frame}
+
+\begin{frame}{System for grant funding allocation}
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.25]{figures/grant_process/num_2.png}
+     \centering
+\end{figure}
+
+
+%%%
+
+
+\end{frame}
+
+\begin{frame}{System for grant funding allocation}
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.25]{figures/grant_process/num_3.png}
+     \centering
+\end{figure}
+
+\end{frame}
+
+
+%%%
+
+
+\begin{frame}{System for grant funding allocation}
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.25]{figures/grant_process/num_4.png}
+     \centering
+\end{figure}
+
+
+\end{frame}
+
+
+%%%
+
+
+\begin{frame}{System for grant funding allocation}
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.25]{figures/grant_process/num_5.png}
+     \centering
+\end{figure}
+
+
+\end{frame}
+
+%%%
+
+\begin{frame}{System for grant funding allocation}
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.25]{figures/grant_process/num_6.png}
+     \centering
+\end{figure}
+
+
+\end{frame}
+
+
+
+% ###
+
+
+
+
+
+
+
+\begin{frame}{Panel review data}
+
+\begin{columns}
+
+\begin{column}{0.6\textwidth}
+
+
+\textbf{Scoring data}
+
+\begin{itemize}
+\item Proposals are scored on an absolute scale.
+\item This scale can either be ordinal or continuous.
+\item The assessment of each proposal should be independent from all other proposals.
+\end{itemize}
+
+
+
+\vspace{0.7cm}
+
+\rule[6pt]{\textwidth}{0.4pt}
+
+\textbf{Ranking data}
+
+\begin{itemize}
+\item Proposals are ranked on a relative scale.
+\item Either all or only top-k proposals are ranked. 
+\item The assessment of each proposal depends directly on the other proposals.
+\end{itemize}
+
+
+
+\end{column}
+
+\begin{column}{0.4\textwidth}
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.06]{figures/scoring_2}
+     \centering
+\end{figure}
+
+
+\rule{\textwidth}{0.4pt}
+
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.07]{figures/ranking_2}
+     \centering
+\end{figure}
+
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}{Thesis objectives}
+\vspace{-1cm}
+\begin{gather*}
+\text{\textcolor{ForestGreen}{"Towards Bayesian joint modelling of ranks and scores}} \\
+\text{\textcolor{ForestGreen}{in the assessment of grant proposal quality"}}
+\end{gather*}
+
+\pause
+\begin{enumerate}
+\item  Identify and describe existing methods for quality assessment using scores and ranks. \pause
+\item  Reproduce and compare these methods on a data set from Gallo et al. (2023). \nocite{gallo_new_2023} \pause
+\item  Compare the results of the Integrated Nested Laplace Approximation (INLA) and Markov Chain Monte Carlo (MCMC) approaches to posterior distribution estimation.  \pause
+\item Extend the Bayesian hierarchical model from Heyard et al. (2022) \nocite{heyard_rethinking_2022} to jointly model ranks and scores and reduce the uncertainty in the assessment of grant proposal quality.
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Definitions (1/3)}
+\textbf{Objects, assessors, latent quality and final ordering}
+\begin{align*}
+    \mathbf{\mathcal{O}} &= \{o_1, o_2, ..., o_n\} \\
+    \mathbf{\mathcal{A}} &= \{a_1, a_2, ..., a_m\} \\
+    \theta_i^{\ k} &\rightarrow \text{Latent quality of object } o_i \text{ according to model } k  \\
+    \mathcal{F}_k(\mathcal{O}) &\rightarrow  \text{Final ordering of objects } \mathcal{O} \text{ according to model } k  \\
+\end{align*} \pause
+\textbf{Conventions}
+\begin{itemize}
+\item The lower the value of the latent quality, the higher the object quality.
+\item $\mathcal{F}_k(\mathcal{O})$ is obtained by sorting  $\theta_i^{\ k}$ in ascending order.
+\end{itemize}
+
+
+
+
+
+\end{frame}
+
+\begin{frame}{Definitions (2/3)}
+
+\textbf{Scoring data}
+\begin{align*}
+     y_{ij} &\rightarrow \text{score given to object } o_i \text{ by assessor } a_j \\
+     S_{j} &= \text{Set of grades given to } \mathcal{O} \text{ by a specific assessor } a_j \\
+     S &= \{S_1, S_2, ..., S_{m}\}, \text{the scoring data}
+\end{align*}  \pause
+\textbf{Conventions}
+
+\begin{itemize}
+\item The lower the score, the higher the object quality.
+\item We assume the latent quality $\theta_i^{\ k}$ of each object is associated with the given scores $y_{ij}$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Definitions (3/3)}
+
+\textbf{Ranking data} (\cite{marden_analyzing_2014, xia_learning_2019})
+\begin{align*}
+\mathcal{L}(\mathcal{O}) &\rightarrow \text{All possible orderings of } \mathcal{O} \\
+R_j \ \epsilon \ \mathcal{L}(\mathcal{O}) &\rightarrow \text{Ranking order given by assessor } a_j \\
+R  &= \{R_1, R_2, ..., R_m\}, \text{the Ranking data} 
+\end{align*} \pause
+\textbf{Example}
+\begin{gather*} \setstretch{1.5}
+\mathcal{O} = \{ o_1, o_2, o_3 \} \\
+\mathcal{L}(\mathcal{O}) = \begin{Bmatrix}
+[o_1 \succ o_2 \succ o_3] & [o_1 \succ o_3 \succ o_2] & [o_2 \succ o_1 \succ o_3]\\
+[o_2 \succ o_3 \succ o_1] & [o_3 \succ o_1 \succ o_2] & [o_3 \succ o_2 \succ o_1]
+\end{Bmatrix}\\
+R_1 = \{ [o_1 \succ o_3 \succ o_2]\}
+\end{gather*}
+\setstretch{1}
+
+\end{frame}
+
+
+
+\begin{frame}{Differences between Ranking and scoring data}
+\textbf{Observations on different levels:}
+\begin{itemize}
+\item $m$ assessors give scores to all $n$ objects $\rightarrow m*n$ observations.
+\item $m$ assessors give each one linear order $\rightarrow m$ observations.
+\end{itemize}
+
+\pause
+
+\textbf{Transforming Linear orders to ranking observations} (add 3 references controversy)
+
+\begin{equation*}
+r_{ij} \rightarrow \text{ position in ranking order } R_j \text{ of object } o_i 
+\end{equation*}
+
+\pause
+
+\textbf{Example:}
+\begin{gather*}
+R_1 = [o_1 \succ o_3 \succ o_2] \\
+r_{31} = 2
+\end{gather*}
+
+
+
+
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Overview of dataset}
+
+From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 ??)
+
+\setstretch{1.2}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c||c|c|}
+        \hline
+        \textbf{Score property}  & \textbf{Value} & \textbf{Rank Property} & \textbf{Value} \\
+        \hline
+        Scoring scale & 1 to 5 & Ranking scale & best 6 \\
+        \hline
+        Objects ($n$) & 28 & Objects ($n$) & 11 \\
+        Assessors ($m$) & 10  & Assessors ($m$) & 10\\
+        Scores per object & 7-10 & Ranks per object & 1-10\\
+        Missing scores & 21 & Missing ranks & 11 \\
+        Total scores (obs./tot.) & 259/280 & Total ranks (obs./total) & 49/60  \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\setstretch{1}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Agreement within Scoring and Ranking data}
+
+\textbf{Using two-way mixed effect fixed rater Intraclass Correlation Coefficients (ICC):}
+
+\begin{itemize}
+\item Assessor agreement within Scoring data:  0.91 (95\% CI from 0.87 to 0.96)
+\item Assessor agreement within Ranking data:  0.55 (95\% CI from 0.33 to 0.8)
+\end{itemize}
+
+\textbf{Interpretaion of ICC values (koo and Li ??)}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c||c|c|c|c|}
+        \hline
+        Agreement  & Poor & Moderate & Good & Excellent  \\
+        \hline
+        ICC values & $<0.5$ & 0.5-0.75 & 0.76-0.9 & $>0.9$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Agreement between Scoring and Ranking data}
+
+% \textbf{Complicated process:}
+% \begin{itemize}
+% \item Ranking and scoring are given on different scales
+% \item Many Ranking objects have the rank $\geq 7$
+% \end{itemize}
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[scale = 0.5]{figures/data/cor_rank_score}
+     \centering
+\end{figure}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Model overview}
+
+\setstretch{1.5}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+           \hline
+          & \textbf{Scores} & \textbf{Ranks} &  \textbf{Frequentist} & \textbf{Bayesian}\\
+        \hline
+         Mean scores & \checkmark &  & \checkmark & \\
+         Hierarchical model for scores & \checkmark &  & & \checkmark \\
+         \hline
+         Plackett-Luce &  & \checkmark & \checkmark & \\
+         Mallows &  & \checkmark & \checkmark & \\
+         Thurstonian &  & \checkmark  & \checkmark & \\
+         \hline
+         Mallows-Binomial & \checkmark & \checkmark & \checkmark & \\
+         Joint hierarchical model & \checkmark & \checkmark  & & \checkmark \\
+         \hline
+    \end{tabular}
+%    \caption{Overview of identified models and their caracteristics}
+    \label{placeholder}
+\end{table}
+
+\setstretch{1}
+
+\end{frame}
+
+
+
+\begin{frame}{Model overview}
+
+\setstretch{1.5}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+           \hline
+          & \textbf{Scores} & \textbf{Ranks} &  \textbf{Frequentist} & \textbf{Bayesian}\\
+        \hline
+         Mean scores & \checkmark &  & \checkmark & \\
+         \textcolor{RoyalBlue}{ (3) Hierarchical model for scores} & \textcolor{RoyalBlue}{\checkmark} &  & & \textcolor{RoyalBlue}{\checkmark} \\
+         \hline
+         Plackett-Luce &  & \checkmark & \checkmark & \\
+         \textcolor{ForestGreen}{ (1) Mallows} &  & \textcolor{ForestGreen}{\checkmark} & \textcolor{ForestGreen}{\checkmark} & \\
+         Thurstonian &  & \checkmark  & \checkmark & \\
+         \hline
+         \textcolor{ForestGreen}{ (2) Mallows-Binomial} & \textcolor{ForestGreen}{\checkmark} & \textcolor{ForestGreen}{\checkmark} & \textcolor{ForestGreen}{\checkmark} & \\
+         \textcolor{RoyalBlue}{ (4) Joint hierarchical model} & \textcolor{RoyalBlue}{\checkmark} & \textcolor{RoyalBlue}{\checkmark}  & & \textcolor{RoyalBlue}{\checkmark} \\
+         \hline
+    \end{tabular}
+%    \caption{Overview of identified models and their caracteristics}
+    \label{placeholder}
+\end{table}
+
+\setstretch{1}
+
+\end{frame}
+
+
+
+\begin{frame}{Definition: Mallows model}
+
+\textbf{Objective:} Determine an underlying ranking order $R^*$ and the dispersion in the ranking $\eta$
+
+\textbf{Observation level:} Ranking order $R_j$
+
+\vspace{1cm} \pause
+
+\textbf{Kendall distance between two linear orders} (??)
+\begin{gather*}
+d(R_j, R^* ) = \sum_{i,l = 1}^n \mathds{1}\{o_i \ \ {\succ}_{R_j}  \ \ o_l \quad \text{and} \quad o_l \ \ {\succ}_{R^*}  \ \ o_i\}
+\end{gather*}
+
+$\rightarrow$ Minimal amount of swaps in objects necessary to exchange two linear orders.
+
+\vspace{1cm}
+
+\end{frame}
+
+
+\begin{frame}{Definition: Mallows model}
+
+\textbf{Objective:} Determine an underlying ranking order $R^*$ and the dispersion in the ranking $\eta$
+
+\textbf{Observation level:} Ranking order $R_j$
+
+\begin{gather*}
+\mathbb{P}[R_j| R^* , \eta] = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \\
+d(R_j, R^* ) = \sum_{i,l = 1}^n \mathds{1}\{o_i \ \ {\succ}_{R_j}  \ \ o_l \quad \text{and} \quad o_l \ \ {\succ}_{R^*}  \ \ o_i\}
+\end{gather*}
+
+with the normalising constant
+\begin{gather*}
+\psi_{\mathcal{O}}(\eta) = \sum_{\mathcal{L}(\mathcal{O})}  \exp(-\eta \ \ d(R_j, R^*)),
+\end{gather*}
+
+\end{frame}
+
+\begin{frame}{Results: Mallows model}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/results/res_Mallows.png}
+\end{figure}
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x25 & x19 & x21 & x4 & x23 & x20 & x16 & x13 & x22\\
+        \hline
+        \textbf{$\hat{R}^*_{\ mlw}$} & 
+        1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}{Definition: Mallows-Binomial model}
+
+\end{frame}
+
+
+\begin{frame}{Definition: Binomial model}
+\textbf{A Binomial model for scores}
+\begin{itemize}
+\item Scores are assumed to be given on an equally distanced ordinal scale.
+\item The scores given to each object is than modelled with a binomial distribution. 
+\end{itemize} \pause
+
+\textbf{Example}
+
+\begin{center}
+Scores are given on a continuous scale from 1 to 5 with up to one decimal place 
+
+$\downarrow$
+
+Scores are given on an ordinal scale containing 40 levels 
+
+\end{center} \pause
+
+\textbf{In practice}
+\begin{equation*}
+\text{Score:} \ 2.4 \rightarrow \text{Ordinal score:} \ 14 
+\end{equation*}
+
+\end{frame}
+
+
+\begin{frame}{Definition: Binomial model}
+
+\textbf{Objective:} Model the quality $\theta_i$ of objects
+
+\textbf{Observation:} individual score $y_{ij}$
+\vspace{0.5cm}
+\begin{gather*}
+y_{ij} | \theta_i, l \  \sim  \  Bin(\theta_i, \nu) \\
+\mathbb{P}[y_{ij} | \pi_i, h] = \binom{\nu}{y} \theta_i^{\ y} (1-\theta_i)^{\nu-y},
+\end{gather*}
+
+\vspace{0.5cm}
+
+
+where scores have $\nu$ levels,
+
+where the expected score is $\nu * \theta_i$
+
+\end{frame}
+
+
+
+
+\begin{frame}{Definition: Mallows-Binomial model}
+
+\textbf{Objective:} Model the underlying ordering $R^*$ \pause
+
+\textbf{Observation:} Set of scores and ranks given by a specific assessor $R_j$ and $S_j$
+
+
+
+\begin{gather*}
+\mathbb{P}[R_j, S_j | \bm{\theta}, \eta]  = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \times \prod_{i=1}^{n} \binom{\nu}{y_{ij}} \theta_i^{\ y_{ij}} (1 - \theta_i)^{\nu-y_{ij}} \\[10pt]
+\bm{\theta} = [\theta_1, ..., \theta_n], \quad R^* = \text{Order}(\theta), \quad \eta > 0
+\end{gather*}
+
+
+\end{frame}
+
+
+\begin{frame}{Results: Mallows-Binomial model}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\linewidth]{figures/results/res_mbin_ranks.png}
+\end{figure}
+
+
+
+
+
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x25 & x19 & x21 & x4 & x23 & x20 & x22 & x13 & x16\\
+        \hline
+        { $\hat{R}_{mbin}^{*}$} & 
+         1 &  2  &  3  &  4  &  5  &  6  &  7  &  8  &  9  &  10 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+
+\end{frame}
+
+\begin{frame}{Hierarchical model for scores}
+
+\textbf{Objective:} Model the quality $\theta_i$ of objects
+
+\textbf{Observation:} Individual scores $y_{ij}$ \vspace{1cm} \pause
+
+
+\textbf{Bayesian hierarchical model}
+\begin{itemize}
+\item Assumes the latent quality $\theta_i$ parameters themselves follow a distribution
+\item Models the possible bias in the assessors judgements
+\item Requires definitions of priors
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Bayesian modelling}
+
+\textbf{Bayes' Theorem}
+\begin{equation*}
+\mathbb{P}[A|B] = \frac{\mathbb{P}[B|A] * \mathbb{P}[A]}{\mathbb{P}[B]} 
+\end{equation*}
+\vspace{0.5cm} \pause
+
+\textbf{In our context:} Learning the object qualities $\bm{\theta}$ from data $S$ and $R$ \\[0.5cm] \pause
+\begin{gather*}
+f(\bm{\theta}| S_j, R_j) =  \frac{f(S, R | \bm{\theta}) * f(\bm{\theta})}{f(S, R)} \\[0.5cm]
+\underbrace{f(\bm{\theta}| S, R)}_{Posterior} \propto  \underbrace{f(S, R | \bm{\theta})}_{Likelihood} * \underbrace{f(\bm{\theta})}_{Prior}
+\end{gather*}
+
+\end{frame}
+
+\begin{frame}{Posterior distribution estimation}
+\textbf{Markov Chain Monte Carlo simulations (\textsc{Mcmc})} (??)
+\begin{itemize}
+\item Define model
+\item Generate samples of the posterior distribution through a simulation  
+\item Assess convergence of the simulation
+\end{itemize}
+
+\pause
+
+\textbf{Integrated Nested Laplace approximation (\textsc{Inla})} (??)
+\begin{itemize}
+\item Define model (latent gaussian)
+\item Estimate conditional posterior distributions using Laplace approximations
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{Hierarchical Model for Scores}
+
+\textbf{Objective:} Model the quality $\theta_i$ of objects
+
+\textbf{Observation:} Individual scores $y_{ij}$ \pause
+
+\begin{gather*}
+y_{ij} | \theta_i^{\ hier}, \lambda_{j} \quad \sim \quad N(\mu + \theta_i^{\ hier} + \lambda_{j}\ , \frac{1}{\tau_y}) \\
+\theta_i^{\ hier} \sim \ N(0,  \frac{1}{\tau_{\theta}}), \quad \quad \lambda_{j} \sim N(0, \frac{1}{\tau_\lambda}) 
+\end{gather*}
+
+where $\theta_i^{\ hier}$, is the estimated quality of the objects, $\lambda_j$ is an assessor specific effect,
+
+where $\mu$ is the mean score of all objects,  
+
+where $\tau_{\theta}, \tau_{\lambda}, \tau_y$ are hyperpriors for precision
+
+
+\end{frame}
+
+\begin{frame}{Model fitting}
+
+
+\textbf{Using \textsc{Mcmc}} (\texttt{rjags}) \vspace{-0.5cm}
+
+\begin{gather*}
+y_{ij} | \theta_i^{\ hier}, \lambda_{j} \quad \sim \quad N(\mu + \theta_i^{\ hier} + \lambda_{j}\ , \frac{1}{\tau_y}) \\
+\theta_i^{\ hier} \sim \ N(0,  \frac{1}{\tau_{\theta}}), \quad \quad \lambda_{j} \sim N(0, \frac{1}{\tau_\lambda}) 
+\end{gather*}
+
+\begin{itemize}
+\item 20000 iterations adaptive sampling and burn-in, 80000 iterations of Gibbs sampling
+\item Thinning of 20 
+\end{itemize}
+
+
+\textbf{Using \textsc{Inla}} (\texttt{inla})
+\begin{gather*}
+y = \beta_0 + \alpha_1 + \alpha_2 + \epsilon \\
+\alpha_1 \sim N(0, \frac{1}{\tau_{\theta}}), \quad \quad \alpha_2 \sim N(0, \frac{1}{\tau_{\lambda}}), \quad \quad \epsilon \sim N(0, \frac{1}{\tau_y})
+\end{gather*}
+
+
+\end{frame}
+
+
+\begin{frame}{Results: Herarchical model for scores}
+
+
+\begin{figure}[H]
+     \centering
+     \includegraphics[width=0.9\linewidth]{figures/results/res_both_hier}
+     \centering
+\end{figure}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}{Results: Herarchical model for scores}
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|l|c|c|c|c|c|}
+        \hline
+         \textbf{Grant ID} &
+         x17 & x25 & x19 & x21 & x4\\
+        \hline
+        \textbf{$\hat{\theta}_i^{\ mean}$} (\texttt{rjags}) & 
+        -1.04 & -0.99 & -0.98 & -0.92 & -0.79 \\
+        \textbf{$\hat{\theta}_i^{\ mean}$} (\texttt{inla})& 
+        -1.04 & -0.99 & -0.98 & -0.92 & -0.79 \\
+        \hline
+        $50\%$ {CI} (\texttt{rjags}) & \footnotesize
+        -1.15 to -0.92 & \footnotesize -1.11 to -0.87 & \footnotesize -1.10 to -0.86 & \footnotesize 
+        -1.04 to -0.80 & \footnotesize -0.91 to 0.67 \\
+        $50\%$ {CI} (\texttt{inla}) & \footnotesize
+        -1.15 to -0.92 & \footnotesize -1.10 to -0.87 & \footnotesize -1.10 to -0.87 & \footnotesize -1.03 to -0.80 & \footnotesize
+        -0.90 to -0.67 \\
+        \hline
+        \hline
+        \textbf{Grant ID} & x23 & x22 & x20 & x6 & x3 \\
+        \hline
+        \textbf{$\hat{\theta}_i^{\ mean}$} (\texttt{rjags}) & 
+        -0.74 & -0.73 & -0.70 & -0.62 & -0.60 \\
+        \textbf{$\hat{\theta}_i^{\ mean}$} (\texttt{inla}) &
+        -0.74 & -0.73 & -0.70 & -0.62 & -0.60 \\
+        \hline
+        $50\%$ {CI} (\texttt{rjags}) & \footnotesize
+        -0.86 to -0.62 & \footnotesize -0.85 to -0.61 & \footnotesize -0.82 to -0.58 & \footnotesize
+        -0.74 to -0.50 & \footnotesize -0.71 to -0.48 \\
+        $50\%$ {CI} (\texttt{inla}) & \footnotesize
+        -0.85 to -0.63 & \footnotesize -0.84 to -0.61 & \footnotesize -0.81 to -0.58 & \footnotesize
+        -0.74 to -0.51 & \footnotesize -0.71 to -0.48 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+\end{frame}
+
+
+\begin{frame}{Comparison of models}
+\textbf{Results from different models are on different scales}
+
+
+Option 1: Transform all scoring and ranking values through z-scoring
+
+
+\begin{equation*}
+z_i^{k} =
+\begin{cases}
+\frac{\hat{\theta}_{i}^k - \hat{\bar{\theta}}^k}{\hat{\sigma}_{\theta^k}}, \quad
+ k = \{mean, \ hier,\ pl\text{-}lu,\ thurst \}\\
+\frac{\hat{r}_{i}^k - \hat{\bar{r}}^k}{\hat{\sigma}_r^k}, \quad 
+ k = \{mlw,\ mbin\} 
+\end{cases}
+\end{equation*}
+
+
+Option 2: Compare final orderings directly
+
+\begin{equation*}
+\mathcal{F}_k(\mathcal{O}), \quad k = \{mean,\ hier,\ pl\text{-}lu,\ mlw,\ thurst,\ mbin,\}
+\end{equation*}
+
+
+\end{frame}
+
+
+\begin{frame}{Comparison of models}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/results/res_finalordering}
+\end{figure}
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}[allowframebreaks]{References}
+ 
+\printbibliography
+
+\end{frame}
+
+
+\begin{frame}{Questions and Suggestions}
+
+
+\end{frame}
+
+\begin{frame}{Supl. : Joint modelling}
+
+
+\end{frame}
+
+
+\begin{frame}{Supl. Descriptive statistics Scoring data}
+
+\end{frame}
+
+
+\begin{frame}{Supl. Descriptive statistics Ranking data}
+
+\end{frame}
+
+
+\begin{frame}{Supl. ICC selection}
+Give graph from reference on ICC
+\end{frame}
+
+
+
+\end{document}

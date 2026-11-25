@@ -110,7 +110,7 @@ I thank my supervisor Dr. Rachel Heyard, for her guidance, support and patience 
 
 # Abstract {.unnumbered}
 
-\textbf{Introduction:} Funding agencies rely on expert evaluations to assess the quality of research proposals submitted to funding calls. Most often, experts are asked to score proposals on an ordinal or continuous scale. Some funders instead ask experts to rank the proposals from best to worst, and few funders ask experts to both score and rank proposals. The scoring and ranking data created in this process are then analysed in order to take funding decisions. While many statistical models exist to analyse these data, there curently exists no formal comparison of these models. Moreover, while there already exist a frequentist model for jointly analysing scoring and ranking data, a Bayesian approach to joint modelling is yet to be explored.
+\textbf{Introduction:} Funding agencies rely on expert evaluations to assess the quality of research proposals submitted to funding calls. Most often, experts are asked to score proposals on an ordinal or continuous scale. Some funders instead ask experts to rank the proposals from best to worst, and few funders ask experts to both score and rank proposals. The scoring and ranking data created in this process are then analysed in order to take funding decisions. While many statistical models exist to analyse these data, there currently exists no formal comparison of these models. Moreover, while there already exist a frequentist model for jointly analysing scoring and ranking data, a Bayesian approach to joint modelling is yet to be explored.
 
 \textbf{Methods:} This work formalises the concepts of ranking and scoring data in the context of grant proposal quality assessment and funding decision making. We review and compare six different frequentist and Bayesian methods that can be used for such data. We apply them on a real-world dataset containing both scoring and ranking data collected by the \textit{American Institute for Biological Sciences}. We also present and compare two different methods for posterior distribution estimation in the Bayesian models: the Integrated Nested Laplace Approximation (\textsc{Inla}), and a Markov chain Monte Carlo simulation (\textsc{Mcmc}).
 
@@ -276,12 +276,12 @@ To compare and reproduce models, we will fit them on a dataset made available in
         \hline
         \textbf{Score property}  & \textbf{Value} & \textbf{Rank Property} & \textbf{Value} \\
         \hline
-        Scoring scale & 1 to 5 & Ranking scale & Rop 6 \\
+        Scoring scale & 1 to 5 & Ranking scale & top 6 \\
         \hline
         Objects ($n$) & 28 & Objects ($n$) & 11 \\
         Assessors ($m$) & 10  & Assessors ($m$) & 10\\
         Scores per object & 7-10 & Ranks per object & 1-10\\
-        Missing scores & 21 & Missing ranks & 5 \\
+        Missing scores & 21 & Missing ranks & 11 \\
         Total scores (obs./tot.) & 259/280 & Total ranks (obs./total) & 49/60  \\
         \hline
     \end{tabular}
@@ -804,7 +804,7 @@ The results of the comparison of model performance using z-scoring can be found 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/results/res_z_score_finalordering.png}
+    \includegraphics[width=0.9\linewidth]{figures/results/res_finalordering}
     \caption{Plot of final ordering by model with jitter: The objects can be found on the x axis, the rank position in the final ordering can be found on the y-axis. The order of the objects was determined by the final ordering of the Mallows-Binomial model. The results from the ranking models are visualised in shades of blue, from the scoring model in shades of green, and from the joint model in black. The models solely taking the ranking data into account only provide a final ordering on the objects that have obtained at minimum one rank (11 first objects).}
     \label{fig:ford}
 \end{figure}
@@ -1355,30 +1355,3 @@ sessionInfo()
 ## Bibliography
 
 \footnotesize
-
-<!-- OLD THINGSSSS
-::: {.callout-note title="**Definitions: Ranks, Scores and Data**" }
-
-**objects** $\mathbf{\mathcal{A}}$ are the set of $n \ \epsilon \ \mathbb{N}$ objects to be ranked by assessors. In the context of grant proposals I will write $\mathcal{A} = \{p_i\}$ with $i \ \epsilon \ \{1, ..., n\}$
-
-\
-
-The score I define here is theoretically the set of scores for all the data set not just one observation
-
-**Scores** $\mathbf{\mathcal{S}(\mathcal{A})}$ are the set of grades given to all of $\mathcal{A}$. In the case of continuous data, I write: $\mathcal{S}(\mathcal{A}) \ \epsilon \ \{[a,b], ...\}$. In the case of ordinal data, I write $\mathcal{S}(\mathcal{A}) \ \epsilon \ \{\{1,...,K\}, ...\}$ with $K$ being the number of levels in the ordinal score 
-
-\
-
-**Linear orders** $\mathbf{\mathcal{L}(\mathcal{A})}$ are the set of all possible ranking orders of $\mathcal{A}$. For any pair of objects $a$,$b$ I will write $a$ $\succ$ $b$ if $a$ is preferred to $b$.
-
-\
-
-**Scoring data** $\mathbf{\mathbf{D_S} = (S_1, ..., S_n) \ \epsilon \ \mathcal{S}(\mathcal{A})}$ are an aggregation of the scores given by the $m$ assessors. The score given to a specific alternative $p_i$ by a specific assessor $j$ will be written $y_{ij}$ with $i \ \epsilon \  \{1,...,n\}$ and $j \ \epsilon \ \{1, ..., m\}$.
-
-\
-
-**Rank data** $\mathbf{D_R}$ $= (R_1, ..., R_m) \ \epsilon \ \mathcal{L}(\mathcal{A})$ are an aggregation of the rankings given by the $m$ assessors. The ranking given by specific assessor $j$ to $\mathcal{A}$ will be written $R_j$ with $j \ \epsilon \ \{1, ..., m\}$.
-
-:::
-
--->
