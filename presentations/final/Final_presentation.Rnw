@@ -19,8 +19,10 @@
 \usepackage{dsfont}
 \usepackage[dvipsnames]{xcolor} % for the color names, see: http://en.wikibooks.org/wiki/LaTeX/Colors#Predefined_
 
+ \newcommand{\independent}{\perp\!\!\!\!\perp}
+ 
 \usepackage[backend=biber, backref=true, style=apa]{biblatex}
-\addbibresource{bib_presentation.bib}
+\addbibresource{bibliography.bib}
 \AtBeginBibliography{\footnotesize}
 
 
@@ -101,13 +103,13 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 \item Thesis objectives
 \end{itemize}
 
-\item \textbf{Methods}
+\item \textbf{Methods \& Results}
 \begin{itemize}
 \item Data
 \item Modelling
 \end{itemize}
 
-\item \textbf{Results \& Discussion}
+\item \textbf{Discussion}
 \begin{itemize}
 \item Comparison of models
 \item Joint modelling
@@ -123,7 +125,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 
 
-\begin{frame}{System for grant funding allocation}
+\begin{frame}{System for Grant Funding Allocation}
 
 
 \begin{figure}[H]
@@ -136,7 +138,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 \end{frame}
 
-\begin{frame}{System for grant funding allocation}
+\begin{frame}{System for Grant Funding Allocation}
 
 \begin{figure}[H]
      \centering
@@ -150,7 +152,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 \end{frame}
 
-\begin{frame}{System for grant funding allocation}
+\begin{frame}{System for Grant Funding Allocation}
 
 \begin{figure}[H]
      \centering
@@ -164,7 +166,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 %%%
 
 
-\begin{frame}{System for grant funding allocation}
+\begin{frame}{System for Grant Funding Allocation}
 
 \begin{figure}[H]
      \centering
@@ -179,7 +181,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 %%%
 
 
-\begin{frame}{System for grant funding allocation}
+\begin{frame}{System for Grant Funding Allocation}
 
 \begin{figure}[H]
      \centering
@@ -192,7 +194,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 %%%
 
-\begin{frame}{System for grant funding allocation}
+\begin{frame}{System for Grant Funding Allocation}
 
 \begin{figure}[H]
      \centering
@@ -213,14 +215,14 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 
 
-\begin{frame}{Panel review data}
+\begin{frame}{Panel Review Data}
 
 \begin{columns}
 
 \begin{column}{0.6\textwidth}
 
 
-\textbf{Scoring data}
+\textbf{Scoring Data}
 
 \begin{itemize}
 \item Proposals are scored on an absolute scale.
@@ -234,7 +236,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 \rule[6pt]{\textwidth}{0.4pt}
 
-\textbf{Ranking data}
+\textbf{Ranking Data}
 
 \begin{itemize}
 \item Proposals are ranked on a relative scale.
@@ -273,7 +275,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 
 
-\begin{frame}{Thesis objectives}
+\begin{frame}{Thesis Objectives}
 \vspace{-1cm}
 \begin{gather*}
 \text{\textcolor{ForestGreen}{"Towards Bayesian joint modelling of ranks and scores}} \\
@@ -292,7 +294,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 
 \begin{frame}{Definitions (1/3)}
-\textbf{Objects, assessors, latent quality and final ordering}
+\textbf{Objects, assessors, latent quality and final ordering} \parencite{xia_learning_2019}
 \begin{align*}
     \mathbf{\mathcal{O}} &= \{o_1, o_2, ..., o_n\} \\
     \mathbf{\mathcal{A}} &= \{a_1, a_2, ..., a_m\} \\
@@ -313,7 +315,7 @@ system (paste ("biber", sub ("\\.Rnw$", "", current_input())))
 
 \begin{frame}{Definitions (2/3)}
 
-\textbf{Scoring data}
+\textbf{Scoring data} \parencite{heyard_rethinking_2022, xia_learning_2019}
 \begin{align*}
      y_{ij} &\rightarrow \text{score given to object } o_i \text{ by assessor } a_j \\
      S_{j} &= \text{Set of grades given to } \mathcal{O} \text{ by a specific assessor } a_j \\
@@ -352,7 +354,7 @@ R_1 = \{ [o_1 \succ o_3 \succ o_2]\}
 
 
 
-\begin{frame}{Differences between Ranking and scoring data}
+\begin{frame}{Differences between Ranking and Scoring Data}
 \textbf{Observations on different levels:}
 \begin{itemize}
 \item $m$ assessors give scores to all $n$ objects $\rightarrow m*n$ observations.
@@ -361,7 +363,7 @@ R_1 = \{ [o_1 \succ o_3 \succ o_2]\}
 
 \pause
 
-\textbf{Transforming Linear orders to ranking observations} (add 3 references controversy)
+\textbf{Transforming Linear orders to ranking observations} \parencite{stevens_theory_1946, mosteller_data_1977, velleman_nominal_1993}
 
 \begin{equation*}
 r_{ij} \rightarrow \text{ position in ranking order } R_j \text{ of object } o_i 
@@ -386,9 +388,9 @@ r_{31} = 2
 
 
 
-\begin{frame}{Overview of dataset}
+\begin{frame}{Overview of Dataset}
 
-From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 ??)
+From the \textit{American Institute for Biological sciences} \parencite{gallo_new_2023}
 
 \setstretch{1.2}
 
@@ -417,7 +419,7 @@ From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 
 
 
 
-\begin{frame}{Agreement within Scoring and Ranking data}
+\begin{frame}{Agreement within Scoring and Ranking Data}
 
 \textbf{Using two-way mixed effect fixed rater Intraclass Correlation Coefficients (ICC):}
 
@@ -426,7 +428,7 @@ From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 
 \item Assessor agreement within Ranking data:  0.55 (95\% CI from 0.33 to 0.8)
 \end{itemize}
 
-\textbf{Interpretaion of ICC values (koo and Li ??)}
+\textbf{Interpretaion of ICC values} \parencite{koo_guideline_2016}
 
 \begin{table}[H]
     \centering
@@ -442,7 +444,7 @@ From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 
 \end{frame}
 
 
-\begin{frame}{Agreement between Scoring and Ranking data}
+\begin{frame}{Agreement between Scoring and Ranking Data}
 
 % \textbf{Complicated process:}
 % \begin{itemize}
@@ -462,7 +464,7 @@ From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 
 
 
 
-\begin{frame}{Model overview}
+\begin{frame}{Model Overview}
 
 \setstretch{1.5}
 
@@ -493,7 +495,7 @@ From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 
 
 
 
-\begin{frame}{Model overview}
+\begin{frame}{Model Overview}
 
 \setstretch{1.5}
 
@@ -524,7 +526,7 @@ From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 
 
 
 
-\begin{frame}{Definition: Mallows model}
+\begin{frame}{Definition: Mallows Model}
 
 \textbf{Objective:} Determine an underlying ranking order $R^*$ and the dispersion in the ranking $\eta$
 
@@ -532,7 +534,7 @@ From the \textit{American Institute for Biological sciences} (Gallo et al. 2023 
 
 \vspace{1cm} \pause
 
-\textbf{Kendall distance between two linear orders} (??)
+\textbf{Kendall distance between two linear orders} 
 \begin{gather*}
 d(R_j, R^* ) = \sum_{i,l = 1}^n \mathds{1}\{o_i \ \ {\succ}_{R_j}  \ \ o_l \quad \text{and} \quad o_l \ \ {\succ}_{R^*}  \ \ o_i\}
 \end{gather*}
@@ -544,11 +546,12 @@ $\rightarrow$ Minimal amount of swaps in objects necessary to exchange two linea
 \end{frame}
 
 
-\begin{frame}{Definition: Mallows model}
+\begin{frame}{Definition: Mallows Model}
 
 \textbf{Objective:} Determine an underlying ranking order $R^*$ and the dispersion in the ranking $\eta$
 
 \textbf{Observation level:} Ranking order $R_j$
+
 
 \begin{gather*}
 \mathbb{P}[R_j| R^* , \eta] = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \\
@@ -558,11 +561,13 @@ d(R_j, R^* ) = \sum_{i,l = 1}^n \mathds{1}\{o_i \ \ {\succ}_{R_j}  \ \ o_l \quad
 with the normalising constant
 \begin{gather*}
 \psi_{\mathcal{O}}(\eta) = \sum_{\mathcal{L}(\mathcal{O})}  \exp(-\eta \ \ d(R_j, R^*)),
-\end{gather*}
+\end{gather*} \vspace{-0.3cm}
+
+\hfill \parencite{mallows_1957}
 
 \end{frame}
 
-\begin{frame}{Results: Mallows model}
+\begin{frame}{Results: Mallows Model}
 
 
 \begin{figure}[H]
@@ -590,7 +595,7 @@ with the normalising constant
 
 
 
-\begin{frame}{Definition: Mallows-Binomial model}
+\begin{frame}{Definition: Mallows-Binomial Model}
 
 \end{frame}
 
@@ -621,7 +626,7 @@ Scores are given on an ordinal scale containing 40 levels
 \end{frame}
 
 
-\begin{frame}{Definition: Binomial model}
+\begin{frame}{Definition: Binomial Model}
 
 \textbf{Objective:} Model the quality $\theta_i$ of objects
 
@@ -639,12 +644,14 @@ where scores have $\nu$ levels,
 
 where the expected score is $\nu * \theta_i$
 
+\hfill \parencite{pearce_unified_2022}
+
 \end{frame}
 
 
 
 
-\begin{frame}{Definition: Mallows-Binomial model}
+\begin{frame}{Definition: Mallows-Binomial Model}
 
 \textbf{Objective:} Model the underlying ordering $R^*$ \pause
 
@@ -653,15 +660,17 @@ where the expected score is $\nu * \theta_i$
 
 
 \begin{gather*}
-\mathbb{P}[R_j, S_j | \bm{\theta}, \eta]  = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \times \prod_{i=1}^{n} \binom{\nu}{y_{ij}} \theta_i^{\ y_{ij}} (1 - \theta_i)^{\nu-y_{ij}} \\[10pt]
+\mathbb{P}[R_j, S_j | \bm{\theta}, \eta]  = \frac{\exp(-\eta \ \ d(R_j, R^*))}{\psi_{\mathcal{O}}(\eta)} \cdot \prod_{i=1}^{n} \binom{\nu}{y_{ij}} \theta_i^{\ y_{ij}} (1 - \theta_i)^{\nu-y_{ij}} \\[10pt]
 \bm{\theta} = [\theta_1, ..., \theta_n], \quad R^* = \text{Order}(\theta), \quad \eta > 0
-\end{gather*}
+\end{gather*} \vspace{1cm}
+
+\hfill \parencite{pearce_unified_2022}
 
 
 \end{frame}
 
 
-\begin{frame}{Results: Mallows-Binomial model}
+\begin{frame}{Results: Mallows-Binomial Model}
 
 
 \begin{figure}[H]
@@ -692,24 +701,13 @@ where the expected score is $\nu * \theta_i$
 
 \end{frame}
 
-\begin{frame}{Hierarchical model for scores}
+\begin{frame}{Bayesian Hierarchical Model for Scores}
 
-\textbf{Objective:} Model the quality $\theta_i$ of objects
-
-\textbf{Observation:} Individual scores $y_{ij}$ \vspace{1cm} \pause
-
-
-\textbf{Bayesian hierarchical model}
-\begin{itemize}
-\item Assumes the latent quality $\theta_i$ parameters themselves follow a distribution
-\item Models the possible bias in the assessors judgements
-\item Requires definitions of priors
-\end{itemize}
 
 \end{frame}
 
 
-\begin{frame}{Bayesian modelling}
+\begin{frame}{Bayesian Modelling}
 
 \textbf{Bayes' Theorem}
 \begin{equation*}
@@ -725,8 +723,8 @@ f(\bm{\theta}| S_j, R_j) =  \frac{f(S, R | \bm{\theta}) * f(\bm{\theta})}{f(S, R
 
 \end{frame}
 
-\begin{frame}{Posterior distribution estimation}
-\textbf{Markov Chain Monte Carlo simulations (\textsc{Mcmc})} (??)
+\begin{frame}{Posterior Distribution Estimation}
+\textbf{Markov Chain Monte Carlo simulations (\textsc{Mcmc})} \parencite{metropolis_equation_1953}
 \begin{itemize}
 \item Define model
 \item Generate samples of the posterior distribution through a simulation  
@@ -735,7 +733,7 @@ f(\bm{\theta}| S_j, R_j) =  \frac{f(S, R | \bm{\theta}) * f(\bm{\theta})}{f(S, R
 
 \pause
 
-\textbf{Integrated Nested Laplace approximation (\textsc{Inla})} (??)
+\textbf{Integrated Nested Laplace approximation (\textsc{Inla})} \parencite{rue_approximate_2009}
 \begin{itemize}
 \item Define model (latent gaussian)
 \item Estimate conditional posterior distributions using Laplace approximations
@@ -749,7 +747,7 @@ f(\bm{\theta}| S_j, R_j) =  \frac{f(S, R | \bm{\theta}) * f(\bm{\theta})}{f(S, R
 
 \textbf{Objective:} Model the quality $\theta_i$ of objects
 
-\textbf{Observation:} Individual scores $y_{ij}$ \pause
+\textbf{Observation:} Individual scores $y_{ij}$ \vspace{-0.5cm} \pause
 
 \begin{gather*}
 y_{ij} | \theta_i^{\ hier}, \lambda_{j} \quad \sim \quad N(\mu + \theta_i^{\ hier} + \lambda_{j}\ , \frac{1}{\tau_y}) \\
@@ -762,10 +760,12 @@ where $\mu$ is the mean score of all objects,
 
 where $\tau_{\theta}, \tau_{\lambda}, \tau_y$ are hyperpriors for precision
 
+\hfill \parencite{heyard_rethinking_2022}
+
 
 \end{frame}
 
-\begin{frame}{Model fitting}
+\begin{frame}{Model Fitting}
 
 
 \textbf{Using \textsc{Mcmc}} (\texttt{rjags}) \vspace{-0.5cm}
@@ -791,7 +791,7 @@ y = \beta_0 + \alpha_1 + \alpha_2 + \epsilon \\
 \end{frame}
 
 
-\begin{frame}{Results: Herarchical model for scores}
+\begin{frame}{Results: Herarchical Model for Scores}
 
 
 \begin{figure}[H]
@@ -806,8 +806,9 @@ y = \beta_0 + \alpha_1 + \alpha_2 + \epsilon \\
 
 
 
-\begin{frame}{Results: Herarchical model for scores}
+\begin{frame}{Results: Herarchical Model for Scores}
 
+\setstretch{1.2}
 \begin{table}[H]
     \small
     \centering
@@ -845,16 +846,17 @@ y = \beta_0 + \alpha_1 + \alpha_2 + \epsilon \\
         \hline
     \end{tabular}
 \end{table}
+\setstretch{1}
 
 
 \end{frame}
 
 
-\begin{frame}{Comparison of models}
-\textbf{Results from different models are on different scales}
+\begin{frame}{Comparison of Models}
+\textbf{Results from different models are on different scales} \pause
 
 
-Option 1: Transform all scoring and ranking values through z-scoring
+Option 1: Transform all scoring and ranking values through z-scoring 
 
 
 \begin{equation*}
@@ -865,7 +867,7 @@ z_i^{k} =
 \frac{\hat{r}_{i}^k - \hat{\bar{r}}^k}{\hat{\sigma}_r^k}, \quad 
  k = \{mlw,\ mbin\} 
 \end{cases}
-\end{equation*}
+\end{equation*} \pause
 
 
 Option 2: Compare final orderings directly
@@ -878,7 +880,7 @@ Option 2: Compare final orderings directly
 \end{frame}
 
 
-\begin{frame}{Comparison of models}
+\begin{frame}{Comparison of Final Orderings}
 
 \begin{figure}[H]
     \centering
@@ -889,8 +891,152 @@ Option 2: Compare final orderings directly
 
 
 
+\begin{frame}{Comparison of Final Orderings}
+
+\setstretch{1.3}
+
+\begin{table}[H]
+    \small
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+         \textbf{Position} &
+         1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10\\
+        \hline
+        \textbf{$\mathcal{F}_{mean}(\mathcal{O})$} & 
+          x17 & x19 & x25 & x21 & x4 & x23 & x22 & x20 & x6 & x3 \\
+        \textbf{$\mathcal{F}_{hier}(\mathcal{O})$} &  
+          x17 & x25 & x19 & x21 & x4 & x23 & x22 & x20 & x6 & x3 \\
+        \hline
+        \hline
+        \textbf{$\mathcal{F}_{pl-lu}(\mathcal{O})$} & 
+          x25 & x19 & x21 & x17 & x4 & x20 & x22 & x23 & x13 & x3, x16 \\
+        \hline
+        \textbf{$\mathcal{F}_{mlw}(\mathcal{O})$} & 
+          x17 & x25 & x19 & x21 & x4 & x23 & x20 & x16 & x13 & x22 \\
+        \hline
+        \textbf{$\mathcal{F}_{thurst}(\mathcal{O})$} & 
+          x25 & x19 & x17 & x21 & x4 & x23 & x20 & x13 & x16 & x22 \\
+        \hline
+        \hline
+        \textbf{$\mathcal{F}_{mbin}(\mathcal{O})$} &
+          x17 & x25 & x19 & x21 & x4 & x23 & x20 & x22 & x13 & x16 \\
+        \hline
+    \end{tabular}
+\end{table}
+\setstretch{1}
+
+\end{frame}
+
+\begin{frame}{Discussion}
+\textbf{Models disagree for ordering between rank 1-3, and rank 7-12}
+\begin{itemize}
+\item Between Scoring and ranking models
+\item Within ranking models
+\item Different models favour different object properties
+\end{itemize}
 
 
+\textbf{Bayesian posterior distribution estimation procedure}
+\begin{itemize}
+\item Both estimation procedures yield very simillar results
+\end{itemize}
+
+\textbf{Limitations}
+\begin{itemize}
+\item Only one dataset analysed
+\item No ground truth available (not a simulation dataset)
+\item Ranking data only partial
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Thesis Objectives}
+\vspace{-1cm}
+\begin{gather*}
+\text{\textcolor{ForestGreen}{"Towards Bayesian joint modelling of ranks and scores}} \\
+\text{\textcolor{ForestGreen}{in the assessment of grant proposal quality"}}
+\end{gather*}
+
+\begin{enumerate}
+\item  Identify and describe existing methods for quality assessment using scores and ranks. 
+\item  Reproduce and compare these methods on a data set from Gallo et al. (2023). \nocite{gallo_new_2023} 
+\item  Compare the results of the Integrated Nested Laplace Approximation (INLA) and Markov Chain Monte Carlo (MCMC) approaches to posterior distribution estimation.  
+\item Extend the Bayesian hierarchical model from Heyard et al. (2022) \nocite{heyard_rethinking_2022} to jointly model ranks and scores and reduce the uncertainty in the assessment of grant proposal quality.
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Outlook - Joint Modelling}
+\textbf{The Mallows-binomial joint model for ranks and scores already exists}
+\begin{itemize}
+\item More weight is given to scoring observations than to ranking observations
+\item Model defined in frequentist framework
+\end{itemize}
+
+\textbf{Paths Towards Joint Modelling}
+\begin{itemize}
+\item Mallows-Binomial model with weighted likelihood
+\item Using ranking models to set priors on qualities $\theta_i$ in the hierarchical model
+\item Joint latent Gaussian model with correlated random effects in \textsc{Inla} framework
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Joint Model using inlajoint}
+
+\textbf{Transforming the data through z-scoring}
+
+\begin{equation*}
+y^{z}_{ij} = \frac{y_{ij} - \hat{\bar{y}}}{\hat{\sigma}_y} \quad \quad r^{z}_{ij} = \frac{r_{ij} - \hat{\bar{r}}}{\hat{\sigma}_r}
+\end{equation*} 
+
+\textbf{Defining Joint model}
+\begin{gather*}
+\begin{cases}
+    y^{z}_{ij} = \beta_0^y + \theta^{y}_{i} + \lambda^{y}_{j}  \\
+    r^{z}_{ij} = \beta_0^r + \theta^{r}_{i} 
+\end{cases} \\[0.5cm]
+\theta^{y} \sim N(0, \sigma_{\theta^y}^2) \quad \quad  \theta^{r} \sim N(0, \sigma_{\theta^r}^2)  \\[0.25cm]
+\text{corr}(\theta^{y},  \theta^{r}) = \rho_{\theta} \\
+\end{gather*} 
+\end{frame}
+
+\begin{frame}{Use of Artificial Inteligence Tools}
+
+I hereby declare that the work carried out in this thesis was done independently, and that no
+part of this project, including all code, reports and presentations was written by any kind of
+generative artificial intelligence tool. I also declare that no artificial intelligence tools were
+used for any kind of proofreading or reformulating in this project. I acknowledge that work
+that violates the principles set out in this declaration of authenticity may have legal and
+disciplinary consequences.
+
+\end{frame}
+
+
+\begin{frame}{R Package Implementations}
+
+\textbf{Mean model} $\rightarrow$ \texttt{Base R} \parencite{R_core}
+
+\textbf{Hierarchical model} $\rightarrow$ \texttt{ERforresearch, inla, rjags} \parencite{heyard_2026, rue_approximate_2009, rjags}
+
+\textbf{Plackett-luce model} $\rightarrow$ \texttt{PlackettLuce} \parencite{turner_modelling_2020}
+
+\textbf{Mallows mode} $\rightarrow$ \texttt{BayesMallows} \parencite{mallows_2020}
+
+\textbf{Thurstonian model} $\rightarrow$ \texttt{psych} \parencite{r_psych}
+
+\textbf{Mallows-Binomial model} $\rightarrow$ \texttt{rankrate} \parencite{rankrate}
+
+\textbf{Joint Hierarchical model} $\rightarrow$ \texttt{inlajoint, inla} \parencite{rustand_fast_2024, rue_approximate_2009}
+
+
+\end{frame}
 
 
 \begin{frame}[allowframebreaks]{References}
@@ -905,25 +1051,161 @@ Option 2: Compare final orderings directly
 
 \end{frame}
 
-\begin{frame}{Supl. : Joint modelling}
+
+
+
+\begin{frame}{Supl. Descriptive Statistics Scoring Data}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/data/scores_figures.png}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Supl. Descriptive Statistics Ranking Sata}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/data/rank_figure.png}
+\end{figure}
 
 
 \end{frame}
 
 
-\begin{frame}{Supl. Descriptive statistics Scoring data}
+\begin{frame}{Supl. ICC Selection}
+
+hyperlink: \href{https://pubmed.ncbi.nlm.nih.gov/27330520/}{Koo \& Li}
 
 \end{frame}
 
 
-\begin{frame}{Supl. Descriptive statistics Ranking data}
+\begin{frame}{Supl. Markov-chain Monte-Carlo}
+
+\textbf{Monte-Carlo simulation:} Generating independent samples of a (posterior) distributions through repeated sampling using a proportionality constraint. \parencite{metropolis_monte_1949}
+
+\textbf{Markov chains:} Enables dependant sampling, where "important" domains of the solution space are more often sampled than the rest of the space. This makes Monte Carlo simulation more efficient. \parencite{metropolis_equation_1953} \pause
+
+The dependant samples converge towards the distribution of a posterior distirbution if:
+\begin{itemize}
+\item the Markov chain is irreducible
+\item The Markov chain is aperiodic
+\item The Markov chain satisfies detail balance
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Supl. Markov-chain \& Independent sampling}
+
+
+\textbf{Markov chain:} A series of numbers ${x^{(1)}, x^{(2)} , ..., x^{(q)}}$ in which any step $x^{(q)}$ depends, and only depends on the previous step $x^{(q-1)}$.
+
+\textbf{Irreducibility:} A Markov chain is said to be irreducible if there exists a transition between any pair $x$ and $x'$ in a finite number of steps $s$.
+
+\textbf{Aperiodicity:} A Markov chain is said to be aperiodic, if the greatest common divisor of all the possible number of steps $\bm{s} = \{s_1, s_2, ..., s_q\}$ between $x$ and itself is 1.
+
+\textbf{Detailed balance} The transition probability $\mathbb{P}[T(x \rightarrow x')]$ between any $x$ and $x'$ satisfy the following property: \vspace{-1cm}
+
+\begin{gather*}
+\mathbb{P}[x] * \mathbb{P}[T(x \rightarrow x')] = \mathbb{P}[x'] * \mathbb{P}[T(x' \rightarrow x)]
+\end{gather*}
+
 
 \end{frame}
 
 
-\begin{frame}{Supl. ICC selection}
-Give graph from reference on ICC
+\begin{frame}{Supl. Metropolis Hasting algorithm}
+
+\textbf{1. Initiate the Markov chain:} Choose a value for $x^{(1)}$, either randomly, or using prior knowledge about the target distribution. 
+
+\textbf{2. Propose a candidate value:} Choose a new candidate value for the chain using an arbitrary function $f(x^{(q+1)} | x^{(q)})$.
+
+\textbf{3. Perform the Metropolis test:} The candidate $x^{(q+1)}$ is accepted with a probability: 
+\begin{equation*}
+\text{min}(1, \frac{f(x^{(q+1)}) * f(x^{(q)} | x^{(q+1)}) }{ f(x^{(q)}) * f(x^{(q+1)} | x^{(q)}))}
+\end{equation*}
+If the candidate is not accepted a new candidate is proposed using step two of this algorithm.
+
+\textbf{4. Repeat until convergence:} Repeat from step two until the distribution of the samples generated by the Markov-chain converges
+
+\hfill \parencite{hastings_monte_1970}
+
 \end{frame}
+
+
+\begin{frame}{Supl. Gibbs Sampling is a Metropolis-Hasting Algorithm}
+
+\begin{gather*}
+x_a^{(q+1)} \sim f(x_a | x_1^{(q + 1)}, ..., x_{a-1}^{(q + 1)}, x_{a+1}^{(q)},  ..., x_{r}^{(q)})  \\  
+\text{For all } x_a \in \bm{x} \nonumber
+\end{gather*}
+
+\begin{gather*}
+\mathbb{P}[\text{acceptance}] = \frac{f(x_a^{(q+1)}) * f(x_a^{(q)}) | x_a^{(q + 1)}) }{ f(x_a^{(q)}) * f(x_a^{(q+1)} | x_a^{(q)})} \\[0.4cm]
+x_a^{(q+1)} \independent x_a^{(q)} \\[0.4cm]
+\mathbb{P}[\text{acceptance}] = \frac{f(x_a^{(q+1)}) * f(x_a^{(q)}) }{ f(x_a^{(q)} * f(x_a^{(q+1)}) } = 1
+\end{gather*}
+
+
+\end{frame}
+
+
+\begin{frame}{Supl. Convergence Diagnostics}
+
+\textbf{Using the \texttt{coda} package} \parencite{coda}
+\begin{itemize}
+\item All parameters converged with $\hat{R} \leq 1.01$  \parencite{gelman_inference_1992}
+\item Multivariate $\hat{R} \leq 1.01$
+\item Raftery and Lewis (1970) \nocite{raftery_1970} diagnostic suggests a minimal sample size of 3746. 
+\begin{itemize}
+\item for 95 \% confidence of achieving a precision of 0.005 in the estimation of the 2.5 \% quantile
+\end{itemize}
+\item Heidelberg's Convergence test (1983) \nocite{heidelberger_simulation_1983} was passed by all four chains
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{Supl. Trace Plots}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/coda_fig/trace_ass_quality}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}{Supl. Autocorrelation Factors}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/coda_fig/acf_worse_case}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Supl. Prior Specifications}
+
+\begin{equation*}
+\mu \sim N(0, 1000) \quad \quad \tau_y \sim G(1,0.1),  \quad \quad \tau_{\theta} \sim G(1,1) \quad \quad
+\tau_\lambda \sim G(1,1)
+\end{equation*}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/coda_fig/prior_distributions}
+\end{figure}
+
+\end{frame}
+
+
+
 
 
 
